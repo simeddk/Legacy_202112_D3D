@@ -43,6 +43,7 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CLog::Log("HAHA");
 }
 
 void ACPlayer::Tick(float DeltaTime)
