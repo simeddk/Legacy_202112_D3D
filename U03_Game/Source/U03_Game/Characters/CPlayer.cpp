@@ -57,6 +57,7 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -74,6 +75,10 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayer::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayer::OnVerticalLook);
 
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayer::OnWalk);
+	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayer::OffWalk);
+
+	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
 }
 
 void ACPlayer::OnMoveForward(float Axis)
@@ -106,5 +111,72 @@ void ACPlayer::OnVerticalLook(float Axis)
 {
 	float rate = Option->GetVerticalLookRate();
 	AddControllerPitchInput(Axis * GetWorld()->GetDeltaSeconds() * rate);
+}
+
+void ACPlayer::OnWalk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
+}
+
+void ACPlayer::OffWalk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
+}
+
+void ACPlayer::OnEvade()
+{
+	CheckFalse(State->IsIdleMode());
+	CheckFalse(Status->CanMove());
+
+	if (InputComponent->GetAxisValue("MoveForward") < 0.0f)
+	{
+		State->SetBackstepMode();
+
+		return;
+	}
+
+	State->SetRollMode();
+}
+
+void ACPlayer::Begin_Backstep()
+{
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	Montages->PlayBackstep();
+}
+
+void ACPlayer::Begin_Roll()
+{
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	FVector start = GetActorLocation();
+	FVector target = start + GetVelocity().GetSafeNormal2D();
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+
+	Montages->PlayRoll();
+}
+
+void ACPlayer::End_Backstep()
+{
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	State->SetIdelMode();
+}
+
+void ACPlayer::End_Roll()
+{
+	State->SetIdelMode();
+}
+
+void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+		case EStateType::Backstep:	Begin_Backstep();	break;
+		case EStateType::Roll:		Begin_Roll();		break;
+	}
 }
 

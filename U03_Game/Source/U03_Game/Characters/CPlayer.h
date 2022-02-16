@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/CStateComponent.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
@@ -40,10 +41,28 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
+private: //AxisEvent
 	void OnMoveForward(float Axis);
 	void OnMoveRight(float Axis);
 	void OnHorizontalLook(float Axis);
 	void OnVerticalLook(float Axis);
 
+
+private: //ActionEvent
+	void OnWalk();
+	void OffWalk();
+
+	void OnEvade();
+
+private:
+	void Begin_Backstep();
+	void Begin_Roll();
+
+public:
+	void End_Backstep();
+	void End_Roll();
+
+private:
+	UFUNCTION()
+		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 };
