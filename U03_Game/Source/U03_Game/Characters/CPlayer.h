@@ -26,6 +26,12 @@ private: //ActorComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCOptionComponent* Option;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		class UCStateComponent* State;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		class UCMontagesComponent* Montages;
+
 
 protected:
 	virtual void BeginPlay() override;
