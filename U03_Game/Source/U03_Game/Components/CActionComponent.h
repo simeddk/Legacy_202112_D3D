@@ -11,6 +11,7 @@ enum class EActionType : uint8
 	Unarmed, Fist, OneHand, TwoHand, Warp, Tornado, MagicBall, Max
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActionTypeChanged, EActionType, InPrevType, EActionType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class U03_GAME_API UCActionComponent : public UActorComponent
@@ -43,16 +44,23 @@ public:
 	UCActionComponent();
 
 	void SetUnarmedMode();
-	void SetFistHandMode();
+	void SetFistMode();
 	void SetOneHandMode();
 	void SetTwoHandMode();
 	void SetWarpMode();
 	void SetTornadoMode();
 	void SetMagicBallMode();
 
+private:
+	void SetMode(EActionType InType);
+	void ChangeType(EActionType InNewType);
+
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	UPROPERTY(BlueprintAssignable)
+		FActionTypeChanged OnActionTypeChanged;
 
 private:
 	EActionType Type;

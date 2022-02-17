@@ -33,6 +33,9 @@ private: //ActorComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCMontagesComponent* Montages;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		class UCActionComponent* Action;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -53,6 +56,10 @@ private: //ActionEvent
 	void OffWalk();
 
 	void OnEvade();
+
+	void OnFist();
+	void OnOneHand();
+	void OnTwoHand();
 
 private:
 	void Begin_Backstep();
