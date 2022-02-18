@@ -35,6 +35,11 @@ public:
 		void End_Equip();
 	void End_Equip_Implementation();
 
+	//해제 명령
+	UFUNCTION(BlueprintNativeEvent)
+		void Unequip();
+	void Unequip_Implementation();
+
 protected:
 	virtual void BeginPlay() override;
 

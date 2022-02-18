@@ -25,6 +25,11 @@ void UCActionComponent::BeginPlay()
 
 void UCActionComponent::SetUnarmedMode()
 {
+	if (!!Datas[(int32)Type])
+		Datas[(int32)Type]->GetEquipment()->Unequip();
+
+	Datas[(int)EActionType::Unarmed]->GetEquipment()->Equip();
+	
 	ChangeType(EActionType::Unarmed);
 }
 
@@ -65,6 +70,14 @@ void UCActionComponent::SetMode(EActionType InType)
 		SetUnarmedMode();
 		return;
 	}
+	else if (IsUnarmedMode() == false)
+	{
+		if (!!Datas[(int32)Type])
+			Datas[(int32)Type]->GetEquipment()->Unequip();
+	}
+
+	if (!!Datas[(int32)InType])
+		Datas[(int32)InType]->GetEquipment()->Equip();
 
 	ChangeType(InType);
 }

@@ -32,7 +32,13 @@ class U03_GAME_API UCActionData : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	FORCEINLINE class ACEquipment* GetEquipment() { return Equipment; }
+
+public:
 	void BeginPlay(class ACharacter* InOwnerCharacter);
+
+private:
+	FString GetLabelName(class ACharacter* InOwnerCharacter, FString InName);
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
