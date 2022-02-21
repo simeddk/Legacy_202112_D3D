@@ -11,6 +11,9 @@ class U03_GAME_API UCStatusComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Health")
+		float MaxHealth = 100.f;
+
 	UPROPERTY(EditAnywhere, Category = "Speed")
 		float SneakSpeed = 200.f;
 
@@ -21,6 +24,9 @@ private:
 		float SprintSpeed = 600.f;
 
 public:
+	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
+	FORCEINLINE float GetHealth() { return Health; }
+
 	FORCEINLINE float GetSneakSpeed() { return SneakSpeed; }
 	FORCEINLINE float GetWalkSpeed() { return WalkSpeed; }
 	FORCEINLINE float GetSprintSpeed() { return SprintSpeed; }
@@ -38,6 +44,8 @@ protected:
 
 
 private:
+	float Health;
+
 	bool bCanMove = true;
 		
 };

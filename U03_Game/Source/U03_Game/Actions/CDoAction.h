@@ -21,6 +21,13 @@ public:
 	virtual void Begin_DoAction() {}
 	virtual void End_DoAction() {}
 
+public:
+	UFUNCTION()
+		virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, class AActor* InCauser, class ACharacter* InOtherChracter) {}
+
+	UFUNCTION()
+		virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class AActor* InCauser, class ACharacter* InOtherChracter) {}
+
 protected:
 	virtual void BeginPlay() override;
 

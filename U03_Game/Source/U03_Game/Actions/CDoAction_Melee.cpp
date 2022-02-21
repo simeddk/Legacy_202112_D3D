@@ -29,3 +29,13 @@ void ACDoAction_Melee::End_DoAction()
 	State->SetIdelMode();
 	Status->SetMove();
 }
+
+void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherChracter)
+{
+	Super::OnAttachmentBeginOverlap(InAttacker, InCauser, InOtherChracter);
+}
+
+void ACDoAction_Melee::OnAttachmentEndOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherChracter)
+{
+	Super::OnAttachmentEndOverlap(InAttacker, InCauser, InOtherChracter);
+}
