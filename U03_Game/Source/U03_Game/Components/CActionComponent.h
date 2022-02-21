@@ -22,6 +22,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 		class UCActionData* Datas[(int32)EActionType::Max];
 
+
+
 public:
 	UFUNCTION(BlueprintPure)
 		FORCEINLINE class UCActionData* GetCurrent() { return Datas[(int32)Type]; }
@@ -58,6 +60,9 @@ public:
 	void SetWarpMode();
 	void SetTornadoMode();
 	void SetMagicBallMode();
+
+public:
+	void DoAction();
 
 private:
 	void SetMode(EActionType InType);
