@@ -51,6 +51,8 @@ ACEnemy::ACEnemy()
 	HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
+
+
 void ACEnemy::BeginPlay()
 {
 	UMaterialInstanceConstant* body;
@@ -65,6 +67,8 @@ void ACEnemy::BeginPlay()
 	GetMesh()->SetMaterial(0, BodyMaterial);
 	GetMesh()->SetMaterial(1, LogoMaterial);
 
+	State->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
+
 	Super::BeginPlay();
 	
 	NameWidget->InitWidget();
@@ -78,6 +82,70 @@ void ACEnemy::BeginPlay()
 
 void ACEnemy::ChangeColor(FLinearColor InColor)
 {
+	if (State->IsHittedMode())
+	{
+		LogoMaterial->SetVectorParameterValue("LogoLight", InColor * 20.0f);
+		LogoMaterial->SetScalarParameterValue("UseLight", 1);
+		return;
+	}
+
 	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
 	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
+}
+
+void ACEnemy::RestoreColor()
+{
+	FLinearColor color = Action->GetCurrent()->GetEquipmentColor();
+
+	LogoMaterial->SetVectorParameterValue("LogoLight", color);
+	LogoMaterial->SetScalarParameterValue("UseLight", 0);
+}
+
+void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+		case EStateType::Hitted: Hitted();	break;
+		case EStateType::Dead:	Dead();		break;
+	}
+}
+
+void ACEnemy::Hitted()
+{
+	Montages->PlayHitted();
+
+	FVector start = GetActorLocation();
+	FVector target = DamageInstigator->GetPawn()->GetActorLocation();
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+	
+	FVector direction = target - start;
+	direction.Normalize();
+	LaunchCharacter(-direction * LauchValue, true, false);
+
+	ChangeColor(FLinearColor::Red);
+	UKismetSystemLibrary::K2_SetTimer(this, "RestoreColor", 1.0f, false);
+
+	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
+}
+
+void ACEnemy::Dead()
+{
+}
+
+float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	DamageInstigator = EventInstigator;
+
+	Status->SubHealth(damage);
+
+	if (Status->GetHealth() <= 0.0f)
+	{
+		State->SetDeadMode();
+		return 0.0f;
+	}
+
+	State->SetHittedMode();
+
+	return Status->GetHealth();
 }

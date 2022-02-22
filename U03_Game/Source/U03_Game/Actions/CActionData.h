@@ -54,8 +54,10 @@ class U03_GAME_API UCActionData : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	FORCEINLINE class ACAttachment* GetAttachment() { return Attachment; }
 	FORCEINLINE class ACEquipment* GetEquipment() { return Equipment; }
 	FORCEINLINE class ACDoAction* GetDoAction() { return DoAction; }
+	FORCEINLINE FLinearColor GetEquipmentColor() { return EquipColor; }
 
 public:
 	void BeginPlay(class ACharacter* InOwnerCharacter);

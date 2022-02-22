@@ -36,6 +36,9 @@ public:
 public:	
 	UCStatusComponent();
 
+	void AddHealth(float InAmount);
+	void SubHealth(float InAmount);
+
 	void SetMove();
 	void SetStop();
 
