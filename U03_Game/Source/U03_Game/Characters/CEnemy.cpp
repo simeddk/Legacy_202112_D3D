@@ -130,6 +130,8 @@ void ACEnemy::Hitted()
 
 void ACEnemy::Dead()
 {
+	CheckFalse(State->IsDeadMode());
+	Montages->PlayDead();
 }
 
 float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
