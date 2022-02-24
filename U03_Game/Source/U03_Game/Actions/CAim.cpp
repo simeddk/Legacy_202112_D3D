@@ -1,5 +1,6 @@
 #include "CAim.h"
 #include "Global.h"
+#include "CHUD.h"
 #include "Components/CStateComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Character.h"
@@ -7,7 +8,7 @@
 
 UCAim::UCAim()
 {
-
+	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Actions/Curve_Aim.Curve_Aim'");
 }
 
 void UCAim::BeginPlay(ACharacter* InCharacter)
@@ -17,11 +18,18 @@ void UCAim::BeginPlay(ACharacter* InCharacter)
 	SpringArm = CHelpers::GetComponent<USpringArmComponent>(OwnerCharacter);
 	Camera = CHelpers::GetComponent<UCameraComponent>(OwnerCharacter);
 	State = CHelpers::GetComponent<UCStateComponent>(OwnerCharacter);
+
+	TimelineFloat.BindUFunction(this, "Zooming");
+	Timeline.AddInterpFloat(Curve, TimelineFloat);
+	Timeline.SetPlayRate(200);
+
+	//Hud = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD<ACHUD>();
+	Hud = OwnerCharacter->GetWorld()->GetFirstPlayerController()->GetHUD<ACHUD>();
 }
 
 void UCAim::Tick(float DeltaTime)
 {
-
+	Timeline.TickTimeline(DeltaTime);
 }
 
 void UCAim::On()
@@ -31,11 +39,13 @@ void UCAim::On()
 
 	bInZoom = true;
 
+	Hud->OnDraw();
+
 	SpringArm->TargetArmLength = 100.0f;
 	SpringArm->SocketOffset = FVector(0, 30, 10);
 	SpringArm->bEnableCameraLag = false;
 
-	Camera->FieldOfView = 45.f;
+	Timeline.PlayFromStart();
 }
 
 void UCAim::Off()
@@ -45,9 +55,16 @@ void UCAim::Off()
 
 	bInZoom = false;
 
+	Hud->OffDraw();
+
 	SpringArm->TargetArmLength = 200.0f;
 	SpringArm->SocketOffset = FVector(0, 0, 0);
 	SpringArm->bEnableCameraLag = true;
 
-	Camera->FieldOfView = 90.f;
+	Timeline.ReverseFromEnd();
+}
+
+void UCAim::Zooming(float Output)
+{
+	Camera->FieldOfView = Output;
 }

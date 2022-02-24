@@ -65,6 +65,9 @@ private: //ActionEvent
 
 	void OnDoAction();
 
+	void OnAim();
+	void OffAim();
+
 private:
 	void Begin_Backstep();
 	void Begin_Roll();

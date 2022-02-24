@@ -23,6 +23,10 @@ public:
 	virtual void OffAim() override;
 
 private:
+	UFUNCTION()
+		void OnThrowBeginOverlap(FHitResult InHitResult);
+
+private:
 	UPROPERTY()
 		class UCAim* Aim;
 	
