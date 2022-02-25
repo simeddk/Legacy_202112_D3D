@@ -12,6 +12,9 @@ void ACDoAction_Throw::BeginPlay()
 
 	Aim = NewObject<UCAim>();
 	Aim->BeginPlay(OwnerCharacter);
+
+	Action = CHelpers::GetComponent<UCActionComponent>(OwnerCharacter);
+	Action->OnActionTypeChanged.AddDynamic(this, &ACDoAction_Throw::AbortByTypeChanged);
 }
 
 void ACDoAction_Throw::DoAction()
@@ -74,4 +77,11 @@ void ACDoAction_Throw::OnThrowBeginOverlap(FHitResult InHitResult)
 {
 	FDamageEvent e;
 	InHitResult.GetActor()->TakeDamage(Datas[0].Power, e, OwnerCharacter->GetController(), this);
+}
+
+void ACDoAction_Throw::AbortByTypeChanged(EActionType InPrevType, EActionType InNewType)
+{
+	CheckFalse(Aim->IsAvaliable());
+	CheckFalse(Aim->IsInZoom());
+	Aim->Off();
 }
