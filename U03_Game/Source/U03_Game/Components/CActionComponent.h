@@ -20,11 +20,11 @@ class U03_GAME_API UCActionComponent : public UActorComponent
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-		class UCActionData* Datas[(int32)EActionType::Max];
+		class UCActionData* DataAssets[(int32)EActionType::Max];
 
 public:
 	UFUNCTION(BlueprintPure)
-		FORCEINLINE class UCActionData* GetCurrent() { return Datas[(int32)Type]; }
+		FORCEINLINE class UCAction* GetCurrent() { return Datas[(int32)Type]; }
 
 public:
 	UFUNCTION(BlueprintPure)
@@ -51,13 +51,13 @@ public:
 public:	
 	UCActionComponent();
 
-	void SetUnarmedMode();
-	void SetFistMode();
-	void SetOneHandMode();
-	void SetTwoHandMode();
-	void SetWarpMode();
-	void SetTornadoMode();
-	void SetMagicBallMode();
+	UFUNCTION(BlueprintCallable) void SetUnarmedMode();
+	UFUNCTION(BlueprintCallable) void SetFistMode();
+	UFUNCTION(BlueprintCallable) void SetOneHandMode();
+	UFUNCTION(BlueprintCallable) void SetTwoHandMode();
+	UFUNCTION(BlueprintCallable) void SetWarpMode();
+	UFUNCTION(BlueprintCallable) void SetTornadoMode();
+	UFUNCTION(BlueprintCallable) void SetMagicBallMode();
 
 	void OffAllCollisions();
 
@@ -80,4 +80,7 @@ public:
 
 private:
 	EActionType Type;
+
+	UPROPERTY()
+		class UCAction* Datas[(int32)EActionType::Max];
 };

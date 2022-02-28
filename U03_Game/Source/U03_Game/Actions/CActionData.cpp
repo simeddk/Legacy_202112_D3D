@@ -5,10 +5,11 @@
 #include "CDoAction.h"
 #include "GameFramework/Character.h"
 
-void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
+void UCActionData::BeginPlay(ACharacter* InOwnerCharacter, UCAction** OutAction)
 {
 	FTransform transform;
 
+	ACAttachment* Attachment = nullptr;
 	if (!!AttachmentClass)
 	{
 		Attachment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACAttachment>(AttachmentClass, transform, InOwnerCharacter);
@@ -16,6 +17,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		UGameplayStatics::FinishSpawningActor(Attachment, transform);
 	}
 
+	ACEquipment* Equipment = nullptr;
 	if (!!EquipmentClass)
 	{
 		Equipment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACEquipment>(EquipmentClass, transform, InOwnerCharacter);
@@ -32,6 +34,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		}
 	}
 
+	ACDoAction* DoAction = nullptr;
 	if (!!DoActionClass)
 	{
 		DoAction = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACDoAction>(DoActionClass, transform, InOwnerCharacter);
@@ -52,7 +55,11 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		}
 	}
 
-	
+	*OutAction = NewObject<UCAction>();
+	(*OutAction)->Attachment = Attachment;
+	(*OutAction)->Equipment = Equipment;
+	(*OutAction)->DoAction = DoAction;
+	(*OutAction)->EquipmentColor = EquipColor;
 }
 
 FString UCActionData::GetLabelName(ACharacter* InOwnerCharacter, FString InName)

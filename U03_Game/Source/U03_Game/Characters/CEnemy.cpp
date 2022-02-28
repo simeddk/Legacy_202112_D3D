@@ -1,6 +1,7 @@
 #include "CEnemy.h"
 #include "Global.h"
 #include "Actions/CActionData.h"
+#include "Actions/CAction.h"
 #include "Components/CActionComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CMontagesComponent.h"
@@ -73,11 +74,12 @@ void ACEnemy::BeginPlay()
 	
 	NameWidget->InitWidget();
 	Cast<UCUserWidget_Name>(NameWidget->GetUserWidgetObject())->SetNameText(GetName());
+	Cast<UCUserWidget_Name>(NameWidget->GetUserWidgetObject())->SetControllerText(GetController()->GetName());
 
 	HealthWidget->InitWidget();
 	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
 
-	Action->SetUnarmedMode();
+	//Action->SetUnarmedMode();
 }
 
 void ACEnemy::ChangeColor(FLinearColor InColor)
@@ -95,6 +97,7 @@ void ACEnemy::ChangeColor(FLinearColor InColor)
 
 void ACEnemy::RestoreColor()
 {
+	CheckNull(Action->GetCurrent());
 	FLinearColor color = Action->GetCurrent()->GetEquipmentColor();
 
 	LogoMaterial->SetVectorParameterValue("LogoLight", color);

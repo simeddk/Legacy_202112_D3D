@@ -1,5 +1,6 @@
 #include "CActionComponent.h"
 #include "Global.h"
+#include "Actions/CAction.h"
 #include "Actions/CActionData.h"
 #include "Actions/CEquipment.h"
 #include "Actions/CAttachment.h"
@@ -20,8 +21,8 @@ void UCActionComponent::BeginPlay()
 
 	for (int32 i = 0; i < (int32)EActionType::Max; i++)
 	{
-		if (!!Datas[i])
-			Datas[i]->BeginPlay(character);
+		if (!!DataAssets[i])
+			DataAssets[i]->BeginPlay(character, &Datas[i]);
 	}
 }
 
@@ -67,12 +68,12 @@ void UCActionComponent::SetMagicBallMode()
 
 void UCActionComponent::OffAllCollisions()
 {
-	for (UCActionData* data : Datas)
+	for (UCAction* data : Datas)
 	{
-		if (!!data == false) // == nullptr
+		if (!!data == false)
 			continue;
 
-		if (!!data->GetAttachment() == false) // == nullptr
+		if (!!data->GetAttachment() == false)
 			continue;
 
 		data->GetAttachment()->OffCollision();
@@ -88,11 +89,11 @@ void UCActionComponent::SetMode(EActionType InType)
 	}
 	else if (IsUnarmedMode() == false)
 	{
-		if (!!Datas[(int32)Type])
+		if (!!Datas[(int32)Type] && !!Datas[(int32)Type]->GetEquipment())
 			Datas[(int32)Type]->GetEquipment()->Unequip();
 	}
 
-	if (!!Datas[(int32)InType])
+	if (!!Datas[(int32)InType] && !!Datas[(int32)Type]->GetEquipment())
 		Datas[(int32)InType]->GetEquipment()->Equip();
 
 	ChangeType(InType);
