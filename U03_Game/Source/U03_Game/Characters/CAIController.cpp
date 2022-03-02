@@ -34,6 +34,11 @@ void ACAIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+float ACAIController::GetSightRadius()
+{
+	return Sight->SightRadius;
+}
+
 void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
