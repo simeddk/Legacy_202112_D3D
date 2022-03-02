@@ -28,6 +28,10 @@ protected:
 	virtual void OnUnPossess() override;
 
 private:
+	UFUNCTION()
+		void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+private:
 	class ACEnemy_AI* OwnerEnemy;
 	class UAISenseConfig_Sight* Sight;
 };

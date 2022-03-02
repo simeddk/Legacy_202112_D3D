@@ -46,6 +46,9 @@ void ACAIController::OnPossess(APawn* InPawn)
 	OwnerEnemy = Cast<ACEnemy_AI>(InPawn);
 	UseBlackboard(OwnerEnemy->GetBehaviorTree()->BlackboardAsset, Blackboard);
 
+	SetGenericTeamId(OwnerEnemy->GetTeamID());
+	Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdated);
+
 	Behavior->SetBlackBoard(Blackboard);
 
 	RunBehaviorTree(OwnerEnemy->GetBehaviorTree());
@@ -54,4 +57,24 @@ void ACAIController::OnPossess(APawn* InPawn)
 void ACAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
+
+	Perception->OnPerceptionUpdated.Clear();
+}
+
+void ACAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+{
+	TArray<AActor*> actors;
+	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
+
+	ACPlayer* player = nullptr;
+	for (AActor* actor : actors)
+	{
+		player = Cast<ACPlayer>(actor);
+
+		if (!!player)
+			break;
+	}
+
+	Blackboard->SetValueAsObject("Player", player);
+
 }

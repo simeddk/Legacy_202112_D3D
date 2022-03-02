@@ -110,6 +110,11 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ACPlayer::OffAim);
 }
 
+FGenericTeamId ACPlayer::GetGenericTeamId() const
+{
+	return FGenericTeamId(TeamID);
+}
+
 void ACPlayer::OnMoveForward(float Axis)
 {
 	CheckFalse(Status->CanMove());
