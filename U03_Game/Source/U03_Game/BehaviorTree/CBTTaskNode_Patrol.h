@@ -2,27 +2,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "CBTTaskNode_Action.generated.h"
+#include "CBTTaskNode_Patrol.generated.h"
 
 UCLASS()
-class U03_GAME_API UCBTTaskNode_Action : public UBTTaskNode
+class U03_GAME_API UCBTTaskNode_Patrol : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "AI")
-		float Delay = 2.0f;
-
 public:
-	UCBTTaskNode_Action();
+	UCBTTaskNode_Patrol();
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	
+
 public:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
-private:
-	float TotalTime = 0.0f;
-
+		
+	
 };
