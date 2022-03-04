@@ -29,9 +29,20 @@ ACAIController::ACAIController()
 
 }
 
+void ACAIController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void ACAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CheckFalse(bDrawDebug);
+	FVector center = OwnerEnemy->GetActorLocation();
+	center.Z -= AdjustCircleHeight;
+	DrawDebugCircle(GetWorld(), center, Sight->SightRadius, 100.0f, FColor::Green, false, -1.f, 0, 0, FVector::RightVector, FVector::ForwardVector);
+	DrawDebugCircle(GetWorld(), center, BehaviorRange, 100.0f, FColor::Red, false, -1.f, 0, 0, FVector::RightVector, FVector::ForwardVector);
 }
 
 float ACAIController::GetSightRadius()
@@ -39,10 +50,7 @@ float ACAIController::GetSightRadius()
 	return Sight->SightRadius;
 }
 
-void ACAIController::BeginPlay()
-{
-	Super::BeginPlay();
-}
+
 
 void ACAIController::OnPossess(APawn* InPawn)
 {

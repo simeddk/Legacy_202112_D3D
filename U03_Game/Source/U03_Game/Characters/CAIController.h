@@ -13,6 +13,12 @@ private:
 	UPROPERTY(EditAnywhere)
 		float BehaviorRange = 150.0f;
 
+	UPROPERTY(EditAnywhere)
+		bool bDrawDebug = true;
+
+	UPROPERTY(EditAnywhere)
+		float AdjustCircleHeight = 50.0f;
+
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCBehaviorComponent* Behavior;

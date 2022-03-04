@@ -22,6 +22,7 @@ public:
 
 
 private:
+	class ACPlayer* UseCursorLocation();
 	bool GetCursorLocationAndRotation(FVector& OutLocation, FRotator& OutRotation);
 
 private:
