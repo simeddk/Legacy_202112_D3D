@@ -17,9 +17,17 @@ private:
 	UPROPERTY(EditAnywhere)
 		float VerticalLookRate = 45.0f;
 
+	UPROPERTY(EditAnywhere)
+		float ZoomSpeed = 1000.0f;
+
+	UPROPERTY(EditAnywhere)
+		FVector2D ZoomRange = FVector2D(0, 500.0f);
+
 public:
 	FORCEINLINE float GetHorizontalLookRate() { return HorizontalLookRate; }
 	FORCEINLINE float GetVerticalLookRate() { return VerticalLookRate; }
+	FORCEINLINE float GetZoomSpeed() { return ZoomSpeed; }
+	FORCEINLINE FVector2D GetZoomRange() { return ZoomRange; }
 
 public:	
 	UCOptionComponent();

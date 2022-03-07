@@ -12,6 +12,7 @@
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ACEnemy::ACEnemy()
 {
@@ -79,7 +80,7 @@ void ACEnemy::BeginPlay()
 	HealthWidget->InitWidget();
 	Cast<UCUserWidget_Health>(HealthWidget->GetUserWidgetObject())->Update(Status->GetHealth(), Status->GetMaxHealth());
 
-	//Action->SetUnarmedMode();
+	NameWidget->SetVisibility(bDrawName);
 }
 
 void ACEnemy::ChangeColor(FLinearColor InColor)
@@ -125,6 +126,8 @@ void ACEnemy::Hitted()
 	direction.Normalize();
 	LaunchCharacter(-direction * LauchValue, true, false);
 
+	Status->SetMove();
+
 	ChangeColor(FLinearColor::Red);
 	UKismetSystemLibrary::K2_SetTimer(this, "RestoreColor", 1.0f, false);
 
@@ -134,13 +137,29 @@ void ACEnemy::Hitted()
 void ACEnemy::Dead()
 {
 	CheckFalse(State->IsDeadMode());
+
+	NameWidget->SetVisibility(false);
+	HealthWidget->SetVisibility(false);
+
+	Action->Dead();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	Montages->PlayDead();
+}
+
+void ACEnemy::End_Dead()
+{
+	Action->End_Dead();
+
+	Destroy();
 }
 
 float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	DamageInstigator = EventInstigator;
+
+	Action->AbortedByDamage();
 
 	Status->SubHealth(damage);
 

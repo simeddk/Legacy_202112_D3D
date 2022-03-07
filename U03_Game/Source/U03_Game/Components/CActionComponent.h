@@ -40,7 +40,7 @@ public:
 		FORCEINLINE bool IsOneTwoMode() { return Type == EActionType::TwoHand; }
 
 	UFUNCTION(BlueprintPure)
-		FORCEINLINE bool IsOneWarpMode() { return Type == EActionType::Warp; }
+		FORCEINLINE bool IsWarpMode() { return Type == EActionType::Warp; }
 
 	UFUNCTION(BlueprintPure)
 		FORCEINLINE bool IsTornadoMode() { return Type == EActionType::Tornado; }
@@ -66,6 +66,11 @@ public:
 
 	void DoOnAim();
 	void DoOffAim();
+
+	void Dead();
+	void End_Dead();
+
+	void AbortedByDamage();
 
 private:
 	void SetMode(EActionType InType);

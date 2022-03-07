@@ -10,6 +10,7 @@
 #include "Components/CStateComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ACPlayer::ACPlayer()
 {
@@ -57,6 +58,26 @@ ACPlayer::ACPlayer()
 	
 }
 
+float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float damage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	DamageInstigator = EventInstigator;
+
+	Action->AbortedByDamage();
+
+	Status->SubHealth(damage);
+
+	if (Status->GetHealth() <= 0.0f)
+	{
+		State->SetDeadMode();
+		return 0.0f;
+	}
+
+	State->SetHittedMode();
+
+	return Status->GetHealth();
+}
+
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -92,6 +113,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
 	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayer::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayer::OnVerticalLook);
+	PlayerInputComponent->BindAxis("Zoom", this, &ACPlayer::OnZoom);
 
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayer::OnWalk);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayer::OffWalk);
@@ -145,6 +167,12 @@ void ACPlayer::OnVerticalLook(float Axis)
 {
 	float rate = Option->GetVerticalLookRate();
 	AddControllerPitchInput(Axis * GetWorld()->GetDeltaSeconds() * rate);
+}
+
+void ACPlayer::OnZoom(float Axis)
+{
+	SpringArm->TargetArmLength += (Option->GetZoomSpeed() * Axis * GetWorld()->GetDeltaSeconds());
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength, Option->GetZoomRange().X, Option->GetZoomRange().Y);
 }
 
 void ACPlayer::OnWalk()
@@ -250,12 +278,37 @@ void ACPlayer::End_Roll()
 	State->SetIdelMode();
 }
 
+void ACPlayer::Hitted()
+{
+	Montages->PlayHitted();
+	Status->SetMove();
+}
+
+void ACPlayer::Dead()
+{
+	CheckFalse(State->IsDeadMode());
+
+	Action->Dead();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	Montages->PlayDead();
+}
+
+void ACPlayer::End_Dead()
+{
+	Action->End_Dead();
+
+	UKismetSystemLibrary::QuitGame(GetWorld(), GetController<APlayerController>(), EQuitPreference::Quit, false);
+}
+
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
 	{
 		case EStateType::Backstep:	Begin_Backstep();	break;
 		case EStateType::Roll:		Begin_Roll();		break;
+		case EStateType::Hitted:	Hitted();			break;
+		case EStateType::Dead:		Dead();				break;
 	}
 }
 

@@ -6,6 +6,7 @@
 #include "Components/CStatusComponent.h"
 #include "Components/CBehaviorComponent.h"
 #include "Components/DecalComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "AIController.h"
 
@@ -110,6 +111,7 @@ bool ACDoAction_Warp::GetCursorLocationAndRotation(FVector& OutLocation, FRotato
 	if (controller->GetHitResultUnderCursorForObjects(objects, true, hitResult))
 	{
 		OutLocation = hitResult.ImpactPoint;
+		OutLocation.Z += 20.0f;
 		OutRotation = hitResult.ImpactNormal.Rotation();
 
 		return true;

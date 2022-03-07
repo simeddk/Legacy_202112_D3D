@@ -19,6 +19,8 @@ private:
 public:
 	ACPlayer();
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 private: //SceneComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;
@@ -56,6 +58,7 @@ private: //AxisEvent
 	void OnMoveRight(float Axis);
 	void OnHorizontalLook(float Axis);
 	void OnVerticalLook(float Axis);
+	void OnZoom(float Axis);
 
 
 private: //ActionEvent
@@ -83,6 +86,11 @@ public:
 	void End_Backstep();
 	void End_Roll();
 
+private:
+	void Hitted();
+	void Dead();
+	void End_Dead() override;
+
 public:
 	virtual void ChangeColor(FLinearColor InColor);
 
@@ -93,4 +101,7 @@ private:
 private:
 	class UMaterialInstanceDynamic* BodyMaterial;
 	class UMaterialInstanceDynamic* LogoMaterial;
+
+private:
+	class AController* DamageInstigator;
 };

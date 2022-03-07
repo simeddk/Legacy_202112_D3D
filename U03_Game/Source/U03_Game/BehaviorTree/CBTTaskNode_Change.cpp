@@ -22,16 +22,21 @@ EBTNodeResult::Type UCBTTaskNode_Change::ExecuteTask(UBehaviorTreeComponent& Own
 	UCActionComponent* action = CHelpers::GetComponent<UCActionComponent>(aiPawn);
 
 	if (Type == EActionType::Warp)
-		action->SetWarpMode();
+	{
+		if (action->IsWarpMode() == false)
+			action->SetWarpMode();
+	}
 	else if (Type == EActionType::MagicBall)
-		action->SetMagicBallMode();
+	{
+		if (action->IsMagicBallMode() == false)
+			action->SetMagicBallMode();
+	}
 
 	return EBTNodeResult::InProgress;
 }
 
 void UCBTTaskNode_Change::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	PrintLine();
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 	ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
