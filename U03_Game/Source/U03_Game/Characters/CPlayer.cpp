@@ -11,6 +11,8 @@
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Widgets/CUserWidget_Select.h"
+#include "Widgets/CUserWidget_SelectItem.h"
 
 ACPlayer::ACPlayer()
 {
@@ -56,6 +58,7 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	
+	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
 }
 
 float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -97,6 +100,12 @@ void ACPlayer::BeginPlay()
 	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 
 	Action->SetUnarmedMode();
+
+	SelectWidget = CreateWidget<UCUserWidget_Select, APlayerController>(GetController<APlayerController>(), SelectWidgetClass);
+	SelectWidget->AddToViewport();
+	//Todo.
+	//SelectWidget->SetVisibility(ESlateVisibility::Hidden);
+	//GetController<APlayerController>()->bShowMouseCursor = true;
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -130,6 +139,10 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ACPlayer::OnAim);
 	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ACPlayer::OffAim);
+
+	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnSelectAction);
+	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Released, this, &ACPlayer::OffSelectAction);
+	
 }
 
 FGenericTeamId ACPlayer::GetGenericTeamId() const
@@ -326,6 +339,14 @@ void ACPlayer::OnAim()
 void ACPlayer::OffAim()
 {
 	Action->DoOffAim();
+}
+
+void ACPlayer::OnSelectAction()
+{
+}
+
+void ACPlayer::OffSelectAction()
+{
 }
 
 void ACPlayer::ChangeColor(FLinearColor InColor)

@@ -16,6 +16,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TeamID")
 		uint8 TeamID = 0;
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+		TSubclassOf<class UCUserWidget_Select> SelectWidgetClass;
+
+public:
+	class UCUserWidget_Select* GetSelectWidget() { return SelectWidget; }
+
 public:
 	ACPlayer();
 
@@ -78,6 +85,9 @@ private: //ActionEvent
 	void OnAim();
 	void OffAim();
 
+	void OnSelectAction();
+	void OffSelectAction();
+
 private:
 	void Begin_Backstep();
 	void Begin_Roll();
@@ -104,4 +114,8 @@ private:
 
 private:
 	class AController* DamageInstigator;
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+		class UCUserWidget_Select* SelectWidget;
 };
