@@ -10,6 +10,9 @@ class U03_GAME_API UCUserWidget_Select : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	FORCEINLINE class UCUserWidget_SelectItem* GetItem(FString InName) { return Items[InName]; }
+
+public:
 	void Press(FString InName);
 	void Hover(FString InName);
 	void Unhover(FString InName);
