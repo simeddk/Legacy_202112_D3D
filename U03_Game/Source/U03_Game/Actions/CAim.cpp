@@ -8,7 +8,7 @@
 
 UCAim::UCAim()
 {
-	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Actions/Curve_Aim.Curve_Aim'");
+	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Curves/Curve_Aim.Curve_Aim'");
 }
 
 void UCAim::BeginPlay(ACharacter* InCharacter)
