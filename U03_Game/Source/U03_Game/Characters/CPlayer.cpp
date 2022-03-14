@@ -143,6 +143,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
 	PlayerInputComponent->BindAction("MagicBall", EInputEvent::IE_Pressed, this, &ACPlayer::OnMagicBall);
 	PlayerInputComponent->BindAction("Warp", EInputEvent::IE_Pressed, this, &ACPlayer::OnWarp);
+	PlayerInputComponent->BindAction("Tornado", EInputEvent::IE_Pressed, this, &ACPlayer::OnTornado);
 
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, this, &ACPlayer::OnDoAction);
 
@@ -259,10 +260,9 @@ void ACPlayer::OnWarp()
 
 void ACPlayer::OnTornado()
 {
-	//CheckFalse(State->IsIdleMode());
+	CheckFalse(State->IsIdleMode());
 
-	CLog::Print("TornadoMode");
-	//Action->SetTornadoMode();
+	Action->SetTornadoMode();
 }
 
 

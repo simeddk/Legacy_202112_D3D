@@ -66,12 +66,25 @@ void ACDoAction_Tornado::Abort()
 {
 	Super::Abort();
 
-	//Todo. 쳐맞으면 모든게 취소
+	Finish();
 }
 
 void ACDoAction_Tornado::Tick(float DeltaTime)
 {
-	//Todo. 플레이어 주변으로 빙글빙글 돌리기
+	Super::Tick(DeltaTime);
+
+	FVector location = OwnerCharacter->GetActorLocation();
+	Angle += Speed * DeltaTime;
+
+	if (FMath::IsNearlyEqual(Angle, 360.0f))
+		Angle = 0.0f;
+
+	FVector rotVector = FVector(Distance, 0, 0);
+	FVector value = rotVector.RotateAngleAxis(Angle, FVector::UpVector);
+
+	location += value;
+
+	Box->SetWorldLocation(location);
 }
 
 void ACDoAction_Tornado::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherChracter)
@@ -113,10 +126,8 @@ void ACDoAction_Tornado::Finish()
 
 	 bActive = false;
 
-
 	ACAttachment* attachment = Cast<ACAttachment>(Box->GetOwner());
 	attachment->OffCollision();
-
 
 	UKismetSystemLibrary::K2_ClearTimer(this, "Hitted");
 }
