@@ -53,10 +53,20 @@ void ACAttachment::AttachToCollision(USceneComponent* InComponent, FName InSocke
 	InComponent->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
 }
 
-void ACAttachment::OnCollision()
+void ACAttachment::OnCollision(FString InCollisionName)
 {
 	for (UShapeComponent* component : ShapeComponents)
-		component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	{
+		if (GetName().Contains("Attachment__Fist"))
+		{
+			if (InCollisionName == component->GetName())
+			{
+				component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			}
+		}
+		else
+			component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 }
 
 void ACAttachment::OffCollision()

@@ -38,7 +38,6 @@ void ACDoAction_Melee::Begin_DoAction()
 	Index = FMath::Clamp(Index, 0, Datas.Num() - 1);
 
 	OwnerCharacter->PlayAnimMontage(Datas[Index].AnimMontage, Datas[Index].PlayRate, Datas[Index].StartSection);
-	CLog::Print(Index, 1);
 	Datas[Index].bCanMove ? Status->SetMove() : Status->SetStop();
 }
 
