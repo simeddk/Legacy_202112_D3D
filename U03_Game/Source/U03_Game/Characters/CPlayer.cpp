@@ -13,6 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
+#include "Objects/CInteractDoor.h"
 
 ACPlayer::ACPlayer()
 {
@@ -59,7 +60,6 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	
 	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
-
 	
 }
 
@@ -114,6 +114,9 @@ void ACPlayer::BeginPlay()
 	SelectWidget->GetItem("Item4")->OnUserWidget_Select_Pressed.AddDynamic(this, &ACPlayer::OnMagicBall);
 	SelectWidget->GetItem("Item5")->OnUserWidget_Select_Pressed.AddDynamic(this, &ACPlayer::OnWarp);
 	SelectWidget->GetItem("Item6")->OnUserWidget_Select_Pressed.AddDynamic(this, &ACPlayer::OnTornado);
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACPlayer::OnBeginOverlap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnEndOverlap);;
 	
 }
 
@@ -152,6 +155,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnSelectAction);
 	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Released, this, &ACPlayer::OffSelectAction);
+
+	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &ACPlayer::OnInteract);
 	
 }
 
@@ -331,6 +336,26 @@ void ACPlayer::End_Dead()
 	UKismetSystemLibrary::QuitGame(GetWorld(), GetController<APlayerController>(), EQuitPreference::Quit, false);
 }
 
+void ACPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	CheckNull(OtherActor);
+	CheckNull(OtherComp);
+	CheckTrue(OtherActor == this);
+
+	if (OtherActor->GetClass()->IsChildOf(ACInteractDoor::StaticClass()))
+		InteractDoor = Cast<ACInteractDoor>(OtherActor);
+}
+
+void ACPlayer::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	CheckNull(OtherActor);
+	CheckNull(OtherComp);
+	CheckTrue(OtherActor == this);
+
+	if (InteractDoor != nullptr)
+		InteractDoor = nullptr;
+}
+
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
@@ -378,6 +403,12 @@ void ACPlayer::OffSelectAction()
 	GetController<APlayerController>()->SetInputMode(FInputModeGameOnly());
 
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+}
+
+void ACPlayer::OnInteract()
+{
+	if (!!InteractDoor)
+		InteractDoor->Interact(Camera->GetForwardVector());
 }
 
 void ACPlayer::ChangeColor(FLinearColor InColor)
