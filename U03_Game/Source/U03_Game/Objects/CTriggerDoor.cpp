@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Characters/CPlayer.h"
 
 ACTriggerDoor::ACTriggerDoor()
 {
@@ -35,28 +36,59 @@ void ACTriggerDoor::BeginPlay()
 
 	Box->OnComponentBeginOverlap.AddDynamic(this, &ACTriggerDoor::OnBeginOverlap);
 	Box->OnComponentEndOverlap.AddDynamic(this, &ACTriggerDoor::OnEndOverlap);
+
+	OnTriggerDoorOpen.AddUFunction(this, "Open");
+	OnTriggerDoorClose.AddUFunction(this, "Close");
 }
 
 void ACTriggerDoor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	CheckNull(OtherActor);
+	CheckNull(OtherComp);
+	CheckTrue(OtherActor == this);
+	CheckFalse(OtherActor->GetClass()->IsChildOf(ACPlayer::StaticClass()));
+
+	if (OnTriggerDoorOpen.IsBound())
+		OnTriggerDoorOpen.Broadcast(Cast<ACPlayer>(OtherActor));
 }
 
 void ACTriggerDoor::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	CheckNull(OtherActor);
+	CheckNull(OtherComp);
+	CheckTrue(OtherActor == this);
+	CheckFalse(OtherActor->GetClass()->IsChildOf(ACPlayer::StaticClass()));
+
+	if (OnTriggerDoorClose.IsBound())
+		OnTriggerDoorClose.Broadcast();
 }
 
 void ACTriggerDoor::Open(ACPlayer* InPlayer)
 {
-	//Todo30
+	FVector doorForward = GetActorForwardVector();
+	FVector playerForward = InPlayer->GetActorForwardVector();
+
+	float direction = FMath::Sign(doorForward | playerForward);
+	Rotation = direction * MaxDegree;
+
+	bOpen = true;
 }
 
 void ACTriggerDoor::Close()
 {
+	bOpen = false;
 }
 
 void ACTriggerDoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FRotator rotation = Door->GetRelativeRotation();
+
+	if (bOpen)
+		Door->SetRelativeRotation(FMath::Lerp(rotation, FRotator(0, Rotation, 0), Speed));
+	else
+		Door->SetRelativeRotation(FMath::Lerp(rotation, FRotator(0, 0, 0), Speed));
 
 }
 

@@ -14,7 +14,7 @@ class U03_GAME_API ACTriggerDoor : public AActor
 
 private:
 	UPROPERTY(EditAnywhere)
-		float Speed = 2.0f;
+		float Speed = 0.02f;
 
 	UPROPERTY(EditAnywhere)
 		float MaxDegree = 90.0f;
