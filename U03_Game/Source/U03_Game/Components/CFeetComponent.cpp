@@ -29,6 +29,13 @@ void UCFeetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	float rightDistance;
 	Trace(RightSocket, rightDistance);
+
+	float offset = FMath::Min(leftDistance, rightDistance);
+	
+	Data.PelvisDistance.Z = UKismetMathLibrary::FInterpTo(Data.PelvisDistance.Z, offset, DeltaTime, InterpSpeed);
+	Data.LeftDistance.X = UKismetMathLibrary::FInterpTo(Data.LeftDistance.X, (leftDistance - offset), DeltaTime, InterpSpeed);
+	Data.RightDistance.X = UKismetMathLibrary::FInterpTo(Data.RightDistance.X, -(rightDistance - offset), DeltaTime, InterpSpeed);
+
 }
 
 void UCFeetComponent::Trace(FName InSocket, float& OutDistance)
@@ -44,7 +51,6 @@ void UCFeetComponent::Trace(FName InSocket, float& OutDistance)
 	TArray<AActor*> ignoreActors;
 	ignoreActors.Add(OwnerCharacter);
 	FHitResult hitResult;
-
 	UKismetSystemLibrary::LineTraceSingle
 	(
 		GetWorld(),
@@ -52,11 +58,16 @@ void UCFeetComponent::Trace(FName InSocket, float& OutDistance)
 		UEngineTypes::ConvertToTraceType(ECC_Visibility),
 		true,
 		ignoreActors,
-		EDrawDebugTrace::ForOneFrame, //TODO
+		DrawDebugType,
 		hitResult,
 		true,
 		FLinearColor::Green,
 		FLinearColor::Red
 	);
+
+	CheckFalse(hitResult.IsValidBlockingHit());
+
+	float length = (hitResult.ImpactPoint - hitResult.TraceEnd).Size(); //땅속으로 뚫고 들어간 정도
+	OutDistance = OffsetDistance + length - TraceDistance;
 }
 

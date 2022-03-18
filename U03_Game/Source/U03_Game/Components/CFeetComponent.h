@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "CFeetComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -41,6 +42,15 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InverseKinemetics")
 		float TraceDistance = 55.0f;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InverseKinemetics")
+		TEnumAsByte<EDrawDebugTrace::Type> DrawDebugType = EDrawDebugTrace::ForOneFrame;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InverseKinemetics")
+		float OffsetDistance = 5.0f;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InverseKinemetics")
+		float InterpSpeed = 17.0f;
 
 public:
 	FORCEINLINE const FFeetData& GetData() { return Data; }

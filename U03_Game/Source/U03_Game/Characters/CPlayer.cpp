@@ -10,6 +10,7 @@
 #include "Components/CStateComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
+#include "Components/CFeetComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
@@ -36,6 +37,7 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateActorComponent(this, &Status, "Status");
 	CHelpers::CreateActorComponent(this, &State, "State");
 	CHelpers::CreateActorComponent(this, &Option, "Option");
+	CHelpers::CreateActorComponent(this, &Feet, "Feet");
 
 	//----------------------------------------------------------------------------
 	//Component Settings
