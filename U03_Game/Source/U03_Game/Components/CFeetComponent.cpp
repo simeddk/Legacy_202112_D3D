@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/TriggerVolume.h"
 
 UCFeetComponent::UCFeetComponent()
 {
@@ -17,6 +18,14 @@ void UCFeetComponent::BeginPlay()
 
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 	CapsuleHalfHeight = OwnerCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+	TArray<AActor*> actors;
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATriggerVolume::StaticClass(), "IK", actors);
+	for (AActor* actor : actors)
+	{
+		actor->OnActorBeginOverlap.AddDynamic(this, &UCFeetComponent::OnActorBeginOverlap);
+		actor->OnActorEndOverlap.AddDynamic(this, &UCFeetComponent::OnActorEndOverlap);
+	}
 }
 
 
@@ -25,10 +34,12 @@ void UCFeetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	float leftDistance;
-	Trace(LeftSocket, leftDistance);
+	FRotator leftRotation;
+	Trace(LeftSocket, leftDistance, leftRotation);
 
 	float rightDistance;
-	Trace(RightSocket, rightDistance);
+	FRotator rightRotation;
+	Trace(RightSocket, rightDistance, rightRotation);
 
 	float offset = FMath::Min(leftDistance, rightDistance);
 	
@@ -36,9 +47,12 @@ void UCFeetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Data.LeftDistance.X = UKismetMathLibrary::FInterpTo(Data.LeftDistance.X, (leftDistance - offset), DeltaTime, InterpSpeed);
 	Data.RightDistance.X = UKismetMathLibrary::FInterpTo(Data.RightDistance.X, -(rightDistance - offset), DeltaTime, InterpSpeed);
 
+	Data.LeftRotation = UKismetMathLibrary::RInterpTo(Data.LeftRotation, leftRotation, DeltaTime, InterpSpeed);
+	Data.RightRotation = UKismetMathLibrary::RInterpTo(Data.RightRotation, rightRotation, DeltaTime, InterpSpeed);
+
 }
 
-void UCFeetComponent::Trace(FName InSocket, float& OutDistance)
+void UCFeetComponent::Trace(FName InSocket, float& OutDistance, FRotator& OutRotation)
 {
 	OutDistance = 0.0f;
 
@@ -64,10 +78,27 @@ void UCFeetComponent::Trace(FName InSocket, float& OutDistance)
 		FLinearColor::Green,
 		FLinearColor::Red
 	);
-
 	CheckFalse(hitResult.IsValidBlockingHit());
 
 	float length = (hitResult.ImpactPoint - hitResult.TraceEnd).Size(); //땅속으로 뚫고 들어간 정도
 	OutDistance = OffsetDistance + length - TraceDistance;
+
+ 	FVector normal = hitResult.ImpactNormal;
+
+	float roll = UKismetMathLibrary::DegAtan2(normal.Y, normal.Z);
+	float pitch = UKismetMathLibrary::DegAtan2(normal.X, normal.Z);
+	OutRotation = FRotator(-pitch, 0.0f, roll);
+}
+
+void UCFeetComponent::OnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	CheckNull(Cast<ACharacter>(OtherActor));
+	bIKMode = true;
+}
+
+void UCFeetComponent::OnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	CheckNull(Cast<ACharacter>(OtherActor));
+	bIKMode = false;
 }
 
