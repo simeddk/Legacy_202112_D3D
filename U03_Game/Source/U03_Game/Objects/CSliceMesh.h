@@ -22,7 +22,7 @@ private:
 public:	
 	ACSliceMesh();
 
-	//virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
 	virtual void BeginPlay() override;

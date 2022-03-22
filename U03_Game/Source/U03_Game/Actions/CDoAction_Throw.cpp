@@ -5,6 +5,9 @@
 #include "Components/CStateComponent.h"
 #include "Components/CStatusComponent.h"
 #include "GameFramework/Character.h"
+#include "ProceduralMeshComponent.h"
+#include "KismetProceduralMeshLibrary.h"
+#include "Materials/MaterialInstanceConstant.h"
 
 void ACDoAction_Throw::BeginPlay()
 {
@@ -75,6 +78,30 @@ void ACDoAction_Throw::OffAim()
 
 void ACDoAction_Throw::OnThrowBeginOverlap(FHitResult InHitResult)
 {
+	UProceduralMeshComponent* otherProcMesh = Cast<UProceduralMeshComponent>(InHitResult.Component);
+
+	if (!!otherProcMesh)
+	{
+		UProceduralMeshComponent* outProcMesh;
+
+		UMaterialInstanceConstant* material;
+		CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&material, "MaterialInstanceConstant'/Game/Materials/MAT_Red_Inst.MAT_Red_Inst'");
+
+		UKismetProceduralMeshLibrary::SliceProceduralMesh
+		(
+			otherProcMesh,
+			InHitResult.ImpactPoint,
+			GetActorRightVector(),
+			true,
+			outProcMesh,
+			EProcMeshSliceCapOption::CreateNewSectionForCap,
+			material
+		);
+
+		outProcMesh->SetSimulatePhysics(true);
+		outProcMesh->AddImpulse(FVector(1000.0f, 1000.0f, 1000.0f), NAME_None, true);
+	}
+
 	FDamageEvent e;
 	InHitResult.GetActor()->TakeDamage(Datas[0].Power, e, OwnerCharacter->GetController(), this);
 }
