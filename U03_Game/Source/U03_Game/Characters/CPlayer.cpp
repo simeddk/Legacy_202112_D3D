@@ -12,6 +12,7 @@
 #include "Components/CActionComponent.h"
 #include "Components/CFeetComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
 #include "Objects/CInteractDoor.h"
@@ -25,6 +26,7 @@ ACPlayer::ACPlayer()
 	//----------------------------------------------------------------------------
 	CHelpers::CreateComponent(this, &SpringArm, "SpringArm", GetMesh());
 	CHelpers::CreateComponent(this, &Camera, "Camera", SpringArm);
+	CHelpers::CreateComponent(this, &PostProcess, "PostProcess", GetRootComponent());
 
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -88.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
@@ -61,6 +63,14 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 	GetCharacterMovement()->RotationRate = FRotator(0, 720, 0);
 	
+	UTexture* dirtMask;
+	CHelpers::GetAsset<UTexture>(&dirtMask, "Texture2D'/Game/Textures/T_SpeedLine.T_SpeedLine'");
+	PostProcess->bEnabled = true;
+	PostProcess->Settings.BloomDirtMask = dirtMask;
+	PostProcess->Settings.bOverride_BloomDirtMaskIntensity = false;
+	PostProcess->Settings.bOverride_BloomDirtMask = false;
+	PostProcess->Settings.BloomDirtMaskIntensity = 25.0f;
+
 	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
 	
 }

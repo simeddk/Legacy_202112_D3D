@@ -35,6 +35,9 @@ private: //SceneComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		class UPostProcessComponent* PostProcess;
+
 private: //ActorComponent
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCStatusComponent* Status;
