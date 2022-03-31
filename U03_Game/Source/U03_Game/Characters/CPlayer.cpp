@@ -71,6 +71,10 @@ ACPlayer::ACPlayer()
 	PostProcess->Settings.bOverride_BloomDirtMask = false;
 	PostProcess->Settings.BloomDirtMaskIntensity = 25.0f;
 
+	UMaterialInstanceConstant* postProcessMaterial;
+	CHelpers::GetAsset<UMaterialInstanceConstant>(&postProcessMaterial, "MaterialInstanceConstant'/Game/Materials/PostProcess/MAT_Scan_Inst.MAT_Scan_Inst'");
+	PostProcess->Settings.AddBlendable(postProcessMaterial, 1.0f);
+
 	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
 	
 }
@@ -327,8 +331,18 @@ void ACPlayer::End_Roll()
 
 void ACPlayer::Hitted()
 {
+	PostProcess->Settings.bOverride_BloomDirtMaskIntensity = true;
+	PostProcess->Settings.bOverride_BloomDirtMask = true;
+	UKismetSystemLibrary::K2_SetTimer(this, "Hitted_End", 0.2f, false);
+
 	Montages->PlayHitted();
 	Status->SetMove();
+}
+
+void ACPlayer::Hitted_End()
+{
+	PostProcess->Settings.bOverride_BloomDirtMaskIntensity = false;
+	PostProcess->Settings.bOverride_BloomDirtMask = false;
 }
 
 void ACPlayer::Dead()

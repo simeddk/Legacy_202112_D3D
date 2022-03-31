@@ -107,6 +107,10 @@ public:
 
 private:
 	void Hitted();
+
+	UFUNCTION()
+		void Hitted_End();
+
 	void Dead();
 	void End_Dead() override;
 
