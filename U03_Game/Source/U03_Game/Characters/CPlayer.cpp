@@ -16,6 +16,8 @@
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
 #include "Objects/CInteractDoor.h"
+#include "Kismet/KismetMaterialLibrary.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 
 ACPlayer::ACPlayer()
 {
@@ -77,6 +79,8 @@ ACPlayer::ACPlayer()
 
 	CHelpers::GetClass<UCUserWidget_Select>(&SelectWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_Select.WB_Select_C'");
 	
+	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Curves/Curve_Scan.Curve_Scan'");
+	//CHelpers::GetAsset<UMaterialParameterCollection>(&ParameterCollection, "MaterialParameterCollection'/Game/Materials/PostProcess/PC_Scan.PC_Scan'");
 }
 
 float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -140,6 +144,7 @@ void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Timeline.TickTimeline(DeltaTime);
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -173,6 +178,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Released, this, &ACPlayer::OffSelectAction);
 
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &ACPlayer::OnInteract);
+	PlayerInputComponent->BindAction("Scan", EInputEvent::IE_Pressed, this, &ACPlayer::OnScan);
 	
 }
 
@@ -393,7 +399,6 @@ void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	}
 }
 
-
 void ACPlayer::OnDoAction()
 {
 	Action->DoAction();
@@ -435,6 +440,25 @@ void ACPlayer::OnInteract()
 {
 	if (!!InteractDoor)
 		InteractDoor->Interact(Camera->GetForwardVector());
+}
+
+void ACPlayer::OnScan()
+{
+	CheckFalse(State->IsIdleMode());
+
+	FOnTimelineFloat progress;
+	progress.BindUFunction(this, "OnProgress");
+
+	Timeline = FTimeline();
+	Timeline.AddInterpFloat(Curve, progress);
+	Timeline.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
+	Timeline.PlayFromStart();
+}
+
+void ACPlayer::OnProgress(float Output)
+{
+	if (!!ParameterCollection)
+		UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), ParameterCollection, "Radius", Output);
 }
 
 void ACPlayer::ChangeColor(FLinearColor InColor)

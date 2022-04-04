@@ -5,6 +5,7 @@
 #include "Components/CStateComponent.h"
 #include "Characters/ICharacter.h"
 #include "GenericTeamAgentInterface.h"
+#include "Components/TimelineComponent.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
@@ -15,6 +16,9 @@ class U03_GAME_API ACPlayer : public ACharacter, public IICharacter, public IGen
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "TeamID")
 		uint8 TeamID = 0;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "PostProcss")
+		class UMaterialParameterCollection* ParameterCollection;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
@@ -96,6 +100,7 @@ private: //ActionEvent
 	void OffSelectAction();
 
 	void OnInteract();
+	void OnScan();
 
 private:
 	void Begin_Backstep();
@@ -128,6 +133,9 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
+	UFUNCTION()
+		void OnProgress(float Output);
+
 private:
 	class UMaterialInstanceDynamic* BodyMaterial;
 	class UMaterialInstanceDynamic* LogoMaterial;
@@ -139,4 +147,10 @@ private:
 protected:
 	UPROPERTY(BlueprintReadOnly)
 		class UCUserWidget_Select* SelectWidget;
+
+private:
+	FTimeline Timeline;
+	class UCurveFloat* Curve;
+	
+
 };
