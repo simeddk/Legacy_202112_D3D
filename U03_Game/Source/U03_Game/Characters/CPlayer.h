@@ -20,9 +20,12 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "PostProcss")
 		class UMaterialParameterCollection* ParameterCollection;
 
-private:
+	UPROPERTY(EditAnywhere, Category = "PostProcess")
+		float SpeedLineLength = 0.1f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 		TSubclassOf<class UCUserWidget_Select> SelectWidgetClass;
+	
 
 public:
 	class UCUserWidget_Select* GetSelectWidget() { return SelectWidget; }
@@ -83,6 +86,8 @@ private: //ActionEvent
 	void OffWalk();
 
 	void OnEvade();
+	
+	UFUNCTION()	void End_Evade();
 
 	UFUNCTION() void OnFist();
 	UFUNCTION() void OnOneHand();
@@ -109,6 +114,9 @@ private:
 public:
 	void End_Backstep();
 	void End_Roll();
+
+private:
+	void UpdateSpeedLine();
 
 private:
 	void Hitted();

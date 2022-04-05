@@ -109,7 +109,7 @@ void ACPlayer::BeginPlay()
 
 	UMaterialInstanceConstant* bodyMaterial;
 	UMaterialInstanceConstant* logoMaterial;
-	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&bodyMaterial, "MaterialInstanceConstant'/Game/Materials/M_UE4Man_Body_Inst.M_UE4Man_Body_Inst'");
+	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&bodyMaterial, "MaterialInstanceConstant'/Game/Materials/PostProcess/MAT_VertexOffset_Inst.MAT_VertexOffset_Inst'");
 	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&logoMaterial, "MaterialInstanceConstant'/Game/Materials/M_UE4Man_ChestLogo_Inst.M_UE4Man_ChestLogo_Inst'");
 
 	BodyMaterial =  UMaterialInstanceDynamic::Create(bodyMaterial, this);
@@ -195,6 +195,7 @@ void ACPlayer::OnMoveForward(float Axis)
 	FVector direction = FQuat(rotator).GetForwardVector();
 
 	AddMovementInput(direction, Axis);
+	UpdateSpeedLine();
 }
 
 void ACPlayer::OnMoveRight(float Axis)
@@ -205,6 +206,7 @@ void ACPlayer::OnMoveRight(float Axis)
 	FVector direction = FQuat(rotator).GetRightVector();
 
 	AddMovementInput(direction, Axis);
+	UpdateSpeedLine();
 }
 
 void ACPlayer::OnHorizontalLook(float Axis)
@@ -240,6 +242,25 @@ void ACPlayer::OnEvade()
 	CheckFalse(State->IsIdleMode());
 	CheckFalse(Status->CanMove());
 
+	if (Action->IsUnarmedMode())
+	{
+		GetCharacterMovement()->GravityScale = 0.0f;
+		FVector direction = FVector::ZeroVector;
+
+		if (FMath::IsNearlyZero(GetVelocity().Size()))
+			direction = GetActorUpVector();
+		else
+			direction = GetVelocity().GetSafeNormal();
+
+		FVector launch = direction * GetCharacterMovement()->MaxWalkSpeed * 0.5f;
+
+		LaunchCharacter(launch, false, true);
+		SpringArm->TargetArmLength = 300.0f;
+
+		UKismetSystemLibrary::K2_SetTimer(this, "End_Evade", 1.0f, false);
+		return;
+	}
+
 	if (InputComponent->GetAxisValue("MoveForward") < 0.0f)
 	{
 		State->SetBackstepMode();
@@ -248,6 +269,12 @@ void ACPlayer::OnEvade()
 	}
 
 	State->SetRollMode();
+}
+
+void ACPlayer::End_Evade()
+{
+	GetCharacterMovement()->GravityScale = 1.0f;
+	SpringArm->TargetArmLength = 200.0f;
 }
 
 void ACPlayer::OnFist()
@@ -333,6 +360,19 @@ void ACPlayer::End_Roll()
 	}
 
 	State->SetIdelMode();
+}
+
+void ACPlayer::UpdateSpeedLine()
+{
+	if (FMath::IsNearlyEqual(GetCharacterMovement()->MaxWalkSpeed, Status->GetSprintSpeed()))
+	{
+		BodyMaterial->SetVectorParameterValue("Direction", -GetVelocity().GetSafeNormal());
+		BodyMaterial->SetScalarParameterValue("Amount", GetVelocity().Size() * SpeedLineLength);
+		return;
+	}
+
+	BodyMaterial->SetVectorParameterValue("Direction", FVector::ZeroVector);
+	BodyMaterial->SetScalarParameterValue("Amount", 0.0f);
 }
 
 void ACPlayer::Hitted()
