@@ -1,6 +1,7 @@
 #include "Example.h"
 #include "GameplayDebugger.h"
 #include "DebuggerCategory/CGameplayDebuggerCategory.h"
+#include "ToolbarCommand/CToolbarCommand.h"
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
 
@@ -13,6 +14,22 @@ void FExampleModule::StartupModule()
 		IGameplayDebugger& gamplayDebugger = IGameplayDebugger::Get();
 		IGameplayDebugger::FOnGetCategory category = IGameplayDebugger::FOnGetCategory::CreateStatic(&CGameplayDebuggerCategory::MakeInstance);
 		gamplayDebugger.RegisterCategory("ExampleCategory", category, EGameplayDebuggerCategoryState::EnabledInGame, 5);
+	}
+
+	//ToolbarCommand
+	{
+		CToolbarCommand::Register();
+		ToolbarExtender = MakeShareable(new FExtender());
+
+		//TODO
+		Extension = ToolbarExtender->AddToolBarExtension
+		(
+			"Compile",
+			EExtensionHook::After,
+			nullptr,
+			nullptr
+		);
+
 	}
 }
 
