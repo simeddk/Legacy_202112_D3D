@@ -9,6 +9,7 @@ class EXAMPLE_API UCDataAsset : public UObject
 {
 	GENERATED_BODY()
 
+public:
 	FORCEINLINE	FName GetName() { return Name; }
 	FORCEINLINE	float GetValue() { return Value; }
 

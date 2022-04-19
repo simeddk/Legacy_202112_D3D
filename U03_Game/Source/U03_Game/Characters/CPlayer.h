@@ -26,6 +26,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 		TSubclassOf<class UCUserWidget_Select> SelectWidgetClass;
 	
+	UPROPERTY(EditDefaultsOnly)
+		class UCDataAsset* Test_DataAsset;
 
 public:
 	class UCUserWidget_Select* GetSelectWidget() { return SelectWidget; }

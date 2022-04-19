@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 #include "Styling/SlateStyle.h"
+#include "IAssetTypeActions.h"
 
 class FExampleModule : public IModuleInterface
 {
@@ -18,4 +19,5 @@ private:
 	TSharedPtr<FExtender> ToolbarExtender;
 	TSharedPtr<const FExtensionBase> Extension;
 	TSharedPtr<FSlateStyleSet> StyleSet;
+	TSharedPtr<IAssetTypeActions> AssetToolAction;
 };

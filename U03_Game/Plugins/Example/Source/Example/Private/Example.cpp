@@ -2,9 +2,12 @@
 #include "GameplayDebugger.h"
 #include "DebuggerCategory/CGameplayDebuggerCategory.h"
 #include "ToolbarCommand/CToolbarCommand.h"
+#include "DataAsset/CAssetToolAction.h"
 #include "LevelEditor.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Interfaces/IPluginManager.h"
+#include "AssetToolsModule.h"
+
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
 
@@ -63,6 +66,15 @@ void FExampleModule::StartupModule()
 
 		FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
 	}
+
+	//AssetTool
+	{
+		IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+		//EAssetTypeCategories::Type category = EAssetTypeCategories::Misc;
+		EAssetTypeCategories::Type category = assetTools.RegisterAdvancedAssetCategory(FName(), FText::FromString("Awesome Category"));
+		AssetToolAction = MakeShareable(new CAssetToolAction(category));
+		assetTools.RegisterAssetTypeActions(AssetToolAction.ToSharedRef());
+	}
 }
 
 void FExampleModule::ShutdownModule()
@@ -82,6 +94,10 @@ void FExampleModule::ShutdownModule()
 
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleSet.Get());
 	StyleSet.Reset();
+
+	//IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	//assetTools.UnregisterAssetTypeActions(AssetToolAction.ToSharedRef());
+	AssetToolAction.Reset();
 }
 
 void FExampleModule::AddToolbarExtension(FToolBarBuilder& InBuilder)

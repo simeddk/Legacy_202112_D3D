@@ -16,6 +16,7 @@
 #include "Widgets/CUserWidget_Select.h"
 #include "Widgets/CUserWidget_SelectItem.h"
 #include "Objects/CInteractDoor.h"
+#include "DataAsset/CDataAsset.h"
 #include "Kismet/KismetMaterialLibrary.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
 
@@ -81,6 +82,8 @@ ACPlayer::ACPlayer()
 	
 	CHelpers::GetAsset<UCurveFloat>(&Curve, "CurveFloat'/Game/Curves/Curve_Scan.Curve_Scan'");
 	//CHelpers::GetAsset<UMaterialParameterCollection>(&ParameterCollection, "MaterialParameterCollection'/Game/Materials/PostProcess/PC_Scan.PC_Scan'");
+
+	CHelpers::GetAsset<UCDataAsset>(&Test_DataAsset, "CDataAsset'/Game/Objects/DA_Test.DA_Test'");
 }
 
 float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -138,6 +141,12 @@ void ACPlayer::BeginPlay()
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACPlayer::OnBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACPlayer::OnEndOverlap);;
 	
+
+	if (!!Test_DataAsset)
+	{
+		CLog::Print(Test_DataAsset->GetName().ToString());
+		CLog::Print(Test_DataAsset->GetValue());
+	}
 }
 
 void ACPlayer::Tick(float DeltaTime)
