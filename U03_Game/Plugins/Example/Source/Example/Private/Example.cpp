@@ -7,6 +7,8 @@
 #include "Styling/SlateStyleRegistry.h"
 #include "Interfaces/IPluginManager.h"
 #include "AssetToolsModule.h"
+#include "DetailPanel/CEditorDetailPanel.h"
+#include "Objects/CHasButton.h"
 
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
@@ -74,6 +76,15 @@ void FExampleModule::StartupModule()
 		EAssetTypeCategories::Type category = assetTools.RegisterAdvancedAssetCategory(FName(), FText::FromString("Awesome Category"));
 		AssetToolAction = MakeShareable(new CAssetToolAction(category));
 		assetTools.RegisterAssetTypeActions(AssetToolAction.ToSharedRef());
+	}
+
+	//DetailPanel
+	{
+		FPropertyEditorModule& edidtor = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		edidtor.RegisterCustomClassLayout
+		(
+			ACHasButton::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&CEditorDetailPanel::MakeInstance)
+		);
 	}
 }
 
