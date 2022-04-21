@@ -12,6 +12,9 @@ class U03_GAME_API ACVertexActor : public AActor
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 		class UProceduralMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere)
+		float Speed = 5.0f;
 	
 public:	
 	ACVertexActor();
@@ -27,6 +30,6 @@ private:
 
 private:
 	TArray<FVector> Vertices;
-	TArray<uint32> Indices;
+	TArray<int32> Indices;
 
 };
