@@ -8,12 +8,20 @@ UCLASS()
 class U04_MULTIPLAY_API ACMovingPlatform : public AStaticMeshActor
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(EditAnywhere)
+		int32 ActiveTriggers = 1;
 	
 public:
 	ACMovingPlatform();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+public:
+	void AddActiveTrigger();
+	void RemoveActiveTrigger();
 
 
 private:
