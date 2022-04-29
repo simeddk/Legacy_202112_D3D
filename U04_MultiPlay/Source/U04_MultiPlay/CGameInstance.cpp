@@ -17,6 +17,10 @@ void UCGameInstance::Host()
 	if (engine == nullptr) return;
 
 	engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
+
+	UWorld* world = GetWorld();
+	if (world == nullptr) return;
+	world->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
 
 void UCGameInstance::Join(const FString& InAddress)
@@ -25,4 +29,8 @@ void UCGameInstance::Join(const FString& InAddress)
 	if (engine == nullptr) return;
 
 	engine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join to %s"), *InAddress));
+
+	APlayerController* controller = GetFirstLocalPlayerController();
+	if (controller == nullptr) return;
+	controller->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);
 }
