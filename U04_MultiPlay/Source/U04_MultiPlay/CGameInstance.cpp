@@ -1,14 +1,39 @@
 #include "CGameInstance.h"
 #include "Engine/Engine.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
 
 UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 {
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance::Constructor"));
+	ConstructorHelpers::FClassFinder<UUserWidget> menuBPClass(TEXT("/Game/Menu/WB_MainMenu"));
+	if (menuBPClass.Succeeded())
+		MenuClass = menuBPClass.Class;
+
 }
 
 void UCGameInstance::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance::Init"));
+	UE_LOG(LogTemp, Warning, TEXT("Widget Class : %s"), *MenuClass->GetName());
+}
+
+void UCGameInstance::LoadMenu()
+{
+	if (MenuClass == nullptr) return;
+
+	UUserWidget* menu = CreateWidget<UUserWidget>(this, MenuClass);
+	if (menu == nullptr) return;
+	
+	menu->AddToViewport();
+
+	menu->bIsFocusable = true;
+
+	FInputModeUIOnly inputMode;
+	inputMode.SetWidgetToFocus(menu->TakeWidget());
+	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	APlayerController* playerController = GetFirstLocalPlayerController();
+	playerController->SetInputMode(inputMode);
+	playerController->bShowMouseCursor = true;
 }
 
 void UCGameInstance::Host()
@@ -30,7 +55,7 @@ void UCGameInstance::Join(const FString& InAddress)
 
 	engine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join to %s"), *InAddress));
 
-	APlayerController* controller = GetFirstLocalPlayerController();
-	if (controller == nullptr) return;
-	controller->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);
+	APlayerController* playerController = GetFirstLocalPlayerController();
+	if (playerController == nullptr) return;
+	playerController->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);
 }
