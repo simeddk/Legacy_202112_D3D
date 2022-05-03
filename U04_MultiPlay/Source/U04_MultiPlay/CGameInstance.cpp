@@ -2,6 +2,7 @@
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
+#include "Menu/CMainMenu.h"
 
 UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 {
@@ -13,14 +14,14 @@ UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 
 void UCGameInstance::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Widget Class : %s"), *MenuClass->GetName());
+	
 }
 
 void UCGameInstance::LoadMenu()
 {
 	if (MenuClass == nullptr) return;
 
-	UUserWidget* menu = CreateWidget<UUserWidget>(this, MenuClass);
+	UCMainMenu* menu = CreateWidget<UCMainMenu>(this, MenuClass);
 	if (menu == nullptr) return;
 	
 	menu->AddToViewport();
@@ -34,6 +35,8 @@ void UCGameInstance::LoadMenu()
 	APlayerController* playerController = GetFirstLocalPlayerController();
 	playerController->SetInputMode(inputMode);
 	playerController->bShowMouseCursor = true;
+
+	menu->SetMenuInterface(this);
 }
 
 void UCGameInstance::Host()
