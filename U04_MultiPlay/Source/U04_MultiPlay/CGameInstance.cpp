@@ -21,26 +21,18 @@ void UCGameInstance::LoadMenu()
 {
 	if (MenuClass == nullptr) return;
 
-	UCMainMenu* menu = CreateWidget<UCMainMenu>(this, MenuClass);
-	if (menu == nullptr) return;
+	Menu = CreateWidget<UCMainMenu>(this, MenuClass);
+	if (Menu == nullptr) return;
 	
-	menu->AddToViewport();
-
-	menu->bIsFocusable = true;
-
-	FInputModeUIOnly inputMode;
-	inputMode.SetWidgetToFocus(menu->TakeWidget());
-	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	APlayerController* playerController = GetFirstLocalPlayerController();
-	playerController->SetInputMode(inputMode);
-	playerController->bShowMouseCursor = true;
-
-	menu->SetMenuInterface(this);
+	Menu->SetMenuInterface(this);
+	Menu->SetUp();
 }
 
 void UCGameInstance::Host()
 {
+	if (!!Menu)
+		Menu->TearDown();
+
 	UEngine* engine = GetEngine();
 	if (engine == nullptr) return;
 

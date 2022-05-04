@@ -26,4 +26,6 @@ public:
 
 private:
 	TSubclassOf<class UUserWidget> MenuClass;
+
+	class UCMainMenu* Menu;
 };
