@@ -3,6 +3,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
 #include "Menu/CMainMenu.h"
+#include "Menu/CMenuWidget.h"
 
 UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 {
@@ -10,6 +11,9 @@ UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 	if (menuBPClass.Succeeded())
 		MenuClass = menuBPClass.Class;
 
+	ConstructorHelpers::FClassFinder<UUserWidget> inGameMenuBPClass(TEXT("/Game/Menu/WB_InGameMenu"));
+	if (inGameMenuBPClass.Succeeded())
+		InGameMenuClass = inGameMenuBPClass.Class;
 }
 
 void UCGameInstance::Init()
@@ -45,6 +49,9 @@ void UCGameInstance::Host()
 
 void UCGameInstance::Join(const FString& InAddress)
 {
+	if (!!Menu)
+		Menu->TearDown();
+
 	UEngine* engine = GetEngine();
 	if (engine == nullptr) return;
 
@@ -53,4 +60,22 @@ void UCGameInstance::Join(const FString& InAddress)
 	APlayerController* playerController = GetFirstLocalPlayerController();
 	if (playerController == nullptr) return;
 	playerController->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);
+}
+
+void UCGameInstance::InGameLoadMenu()
+{
+	if (InGameMenuClass == nullptr) return;
+
+	UCMenuWidget* inGameMenu = CreateWidget<UCMenuWidget>(this, InGameMenuClass);
+	if (inGameMenu == nullptr) return;
+
+	inGameMenu->SetMenuInterface(this);
+	inGameMenu->SetUp();
+}
+
+void UCGameInstance::LoadMainMenu()
+{
+	APlayerController* playerController = GetFirstLocalPlayerController();
+	if (playerController == nullptr) return;
+	playerController->ClientTravel("/Game/ThirdPersonCPP/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
 }

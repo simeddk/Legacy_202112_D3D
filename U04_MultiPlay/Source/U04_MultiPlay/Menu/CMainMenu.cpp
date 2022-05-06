@@ -18,53 +18,27 @@ bool UCMainMenu::Initialize()
 	if (CancelJoinMenuButton == nullptr) return false;
 	CancelJoinMenuButton->OnClicked.AddDynamic(this, &UCMainMenu::OpenMainMenu);
 
+	if (ConfirmJoinMenuButton == nullptr) return false;
+	ConfirmJoinMenuButton->OnClicked.AddDynamic(this, &UCMainMenu::JoinServer);
+
 	return true;
-}
-
-void UCMainMenu::SetMenuInterface(IIMenuInterface* InMenuInterface)
-{
-	MenuInterface = InMenuInterface;
-}
-
-void UCMainMenu::SetUp()
-{
-	AddToViewport();
-	bIsFocusable = true;
-
-	FInputModeUIOnly inputMode;
-	inputMode.SetWidgetToFocus(TakeWidget());
-	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	UWorld* world = GetWorld();
-	if (world == nullptr) return;
-
-	APlayerController* playerController = world->GetFirstPlayerController();
-	if (playerController == nullptr) return;
-	
-	playerController->SetInputMode(inputMode);
-	playerController->bShowMouseCursor = true;
-}
-
-void UCMainMenu::TearDown()
-{
-	RemoveFromViewport();
-	bIsFocusable = false;
-
-	FInputModeGameOnly inputMode;
-
-	UWorld* world = GetWorld();
-	if (world == nullptr) return;
-
-	APlayerController* playerController = world->GetFirstPlayerController();
-	if (playerController == nullptr) return;
-
-	playerController->SetInputMode(inputMode);
-	playerController->bShowMouseCursor = false;
 }
 
 void UCMainMenu::HostServer()
 {
-	MenuInterface->Host();
+	if (!!MenuInterface)
+		MenuInterface->Host();
+}
+
+void UCMainMenu::JoinServer()
+{
+	if (!!MenuInterface)
+	{
+		if (IPAddressField == nullptr) return;
+		const FString& address = IPAddressField->GetText().ToString();
+		MenuInterface->Join(address);
+	}
+		
 }
 
 void UCMainMenu::OpenJoinMenu()
@@ -80,3 +54,5 @@ void UCMainMenu::OpenMainMenu()
 	if (MainMenu == nullptr) return;
 	MenuSwitcher->SetActiveWidget(MainMenu);
 }
+
+

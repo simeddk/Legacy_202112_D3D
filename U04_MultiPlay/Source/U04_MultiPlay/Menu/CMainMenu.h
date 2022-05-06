@@ -1,20 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
 #include "IMenuInterface.h"
+#include "CMenuWidget.h"
 #include "CMainMenu.generated.h"
 
 UCLASS()
-class U04_MULTIPLAY_API UCMainMenu : public UUserWidget
+class U04_MULTIPLAY_API UCMainMenu : public UCMenuWidget
 {
 	GENERATED_BODY()
-
-public:
-	void SetMenuInterface(IIMenuInterface* InMenuInterface);
-	
-	void SetUp();
-	void TearDown();
 
 protected:
 	virtual bool Initialize() override;
@@ -24,10 +18,14 @@ private:
 		void HostServer();
 
 	UFUNCTION()
+		void JoinServer();
+
+	UFUNCTION()
 		void OpenJoinMenu();
 
 	UFUNCTION()
 		void OpenMainMenu();
+	
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -54,6 +52,4 @@ private:
 	UPROPERTY(meta = (BindWidget))
 		class UEditableTextBox* IPAddressField;
 
-private:
-	IIMenuInterface* MenuInterface;
 };
