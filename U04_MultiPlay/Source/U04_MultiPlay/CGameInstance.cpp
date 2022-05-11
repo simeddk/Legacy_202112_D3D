@@ -4,6 +4,10 @@
 #include "Blueprint/UserWidget.h"
 #include "Menu/CMainMenu.h"
 #include "Menu/CMenuWidget.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
+
+const static FName SESSION_NAME = TEXT("GameSession");
 
 UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 {
@@ -26,7 +30,8 @@ void UCGameInstance::Init()
 		SessionInterface = subSystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Session Interface Found"));
+			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnCreateSessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnDestroySessionComplete);
 		}
 	}
 	else
@@ -48,17 +53,56 @@ void UCGameInstance::LoadMenuWidget()
 
 void UCGameInstance::Host()
 {
+	if (SessionInterface.IsValid())
+	{
+		auto exsistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
+		if (!!exsistingSession)
+		{
+			SessionInterface->DestroySession(SESSION_NAME);
+		}
+		else
+		{
+			CreateSession();
+		}
+		
+	}
+}
+
+void UCGameInstance::CreateSession()
+{
+	if (SessionInterface.IsValid())
+	{
+		FOnlineSessionSettings sessionSettings;
+		SessionInterface->CreateSession(0, SESSION_NAME, sessionSettings);
+	}
+}
+
+void UCGameInstance::OnCreateSessionComplete(FName InSessionName, bool InSuccess)
+{
+	if (InSuccess == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could Not Create Session!!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Session Name : %s"), *InSessionName.ToString());
+
 	if (!!Menu)
 		Menu->TearDown();
 
 	UEngine* engine = GetEngine();
 	if (engine == nullptr) return;
-
 	engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
 
 	UWorld* world = GetWorld();
 	if (world == nullptr) return;
 	world->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+}
+
+void UCGameInstance::OnDestroySessionComplete(FName InSessionName, bool InSuccess)
+{
+	if (InSuccess == true)
+		CreateSession();
 }
 
 void UCGameInstance::Join(const FString& InAddress)
