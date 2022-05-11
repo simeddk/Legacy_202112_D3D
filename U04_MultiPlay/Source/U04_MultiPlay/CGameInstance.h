@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Menu/IMenuInterface.h"
+#include "OnlineSubsystem.h"
 #include "CGameInstance.generated.h"
 
 UCLASS()
@@ -16,7 +17,7 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Exec)
-		void LoadMenu();
+		void LoadMenuWidget();
 
 	UFUNCTION(BlueprintCallable)
 		void InGameLoadMenu();
@@ -34,4 +35,6 @@ private:
 	TSubclassOf<class UUserWidget> InGameMenuClass;
 
 	class UCMainMenu* Menu;
+
+	IOnlineSessionPtr SessionInterface;
 };

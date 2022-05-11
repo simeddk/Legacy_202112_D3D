@@ -18,10 +18,24 @@ UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 
 void UCGameInstance::Init()
 {
-	
+	IOnlineSubsystem* subSystem = IOnlineSubsystem::Get();
+	if (!!subSystem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SubSystem Found : %s"), *subSystem->GetSubsystemName().ToString());
+
+		SessionInterface = subSystem->GetSessionInterface();
+		if (SessionInterface.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Session Interface Found"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Found SubSystem"));
+	}
 }
 
-void UCGameInstance::LoadMenu()
+void UCGameInstance::LoadMenuWidget()
 {
 	if (MenuClass == nullptr) return;
 
