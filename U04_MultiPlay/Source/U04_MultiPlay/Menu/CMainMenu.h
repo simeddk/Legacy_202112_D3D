@@ -10,6 +10,12 @@ class U04_MULTIPLAY_API UCMainMenu : public UCMenuWidget
 {
 	GENERATED_BODY()
 
+public:
+	UCMainMenu(const FObjectInitializer& ObjectInitializer);
+
+	void SetServerList(TArray<FString> InServerName);
+	//void SelectedIndex(uint32 Index);
+
 protected:
 	virtual bool Initialize() override;
 
@@ -29,6 +35,8 @@ private:
 	UFUNCTION()
 		void QuitPressed();
 	
+private:
+	TSubclassOf<class UCServerRow> ServerRowClass;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -53,8 +61,11 @@ private:
 		class UWidget* JoinMenu;
 
 	UPROPERTY(meta = (BindWidget))
-		class UEditableTextBox* IPAddressField;
+		class UPanelWidget* ServerList;
 
 	UPROPERTY(meta = (BindWidget))
 		class UButton* QuitButton;
+
+private:
+	TOptional<uint32> SelectedIndex;
 };

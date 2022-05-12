@@ -2,6 +2,15 @@
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableTextBox.h"
+#include "Components/TextBlock.h"
+#include "CServerRow.h"
+
+UCMainMenu::UCMainMenu(const FObjectInitializer& ObjectInitializer)
+{
+	ConstructorHelpers::FClassFinder<UUserWidget> serverRowClass(TEXT("/Game/Menu/WB_ServerRow"));
+	if (serverRowClass.Succeeded())
+		ServerRowClass = serverRowClass.Class;
+}
 
 bool UCMainMenu::Initialize()
 {
@@ -27,6 +36,11 @@ bool UCMainMenu::Initialize()
 	return true;
 }
 
+//void UCMainMenu::SelectedIndex(uint32 Index)
+//{
+//	SelectedIndex = Index;
+//}
+
 void UCMainMenu::HostServer()
 {
 	if (!!MenuInterface)
@@ -37,18 +51,38 @@ void UCMainMenu::JoinServer()
 {
 	if (!!MenuInterface)
 	{
-		if (IPAddressField == nullptr) return;
-		const FString& address = IPAddressField->GetText().ToString();
-		MenuInterface->Join(address);
-	}
+		MenuInterface->Join("");
 		
+	}
 }
+
+void UCMainMenu::SetServerList(TArray<FString> InServerName)
+{
+	UWorld* world = GetWorld();
+	if (world == nullptr) return;
+
+	ServerList->ClearChildren();
+
+	for (const FString& serverName : InServerName)
+	{
+		UCServerRow* row = CreateWidget<UCServerRow>(world, ServerRowClass);
+		if (row == nullptr) return;
+
+		row->ServerName->SetText(FText::FromString(serverName));
+
+		ServerList->AddChild(row);
+	}
+}
+
 
 void UCMainMenu::OpenJoinMenu()
 {
 	if (MenuSwitcher == nullptr) return;
 	if (JoinMenu == nullptr) return;
 	MenuSwitcher->SetActiveWidget(JoinMenu);
+
+	if (!!MenuInterface)
+		MenuInterface->RefreshServerList();
 }
 
 void UCMainMenu::OpenMainMenu()

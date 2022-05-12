@@ -29,6 +29,8 @@ public:
 		void Join(const FString& InAddress) override;
 
 	virtual void LoadMainMenu() override;
+	
+	void RefreshServerList() override;
 
 private:
 	void OnCreateSessionComplete(FName InSessionName, bool InSuccess);

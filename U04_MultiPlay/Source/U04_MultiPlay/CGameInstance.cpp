@@ -33,14 +33,6 @@ void UCGameInstance::Init()
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnCreateSessionComplete);
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UCGameInstance::OnFindSessionComplete);
-
-			//FindSession
-			SessionSearch = MakeShareable(new FOnlineSessionSearch());
-			if (SessionSearch.IsValid())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Starting Find Sessions"));
-				SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-			}
 		}
 	}
 	else
@@ -82,6 +74,9 @@ void UCGameInstance::CreateSession()
 	if (SessionInterface.IsValid())
 	{
 		FOnlineSessionSettings sessionSettings;
+		sessionSettings.bIsLANMatch = true;
+		sessionSettings.NumPublicConnections = 2;
+		sessionSettings.bShouldAdvertise = true;
 		SessionInterface->CreateSession(0, SESSION_NAME, sessionSettings);
 	}
 }
@@ -116,7 +111,7 @@ void UCGameInstance::OnDestroySessionComplete(FName InSessionName, bool InSucces
 
 void UCGameInstance::Join(const FString& InAddress)
 {
-	if (!!Menu)
+	/*if (!!Menu)
 		Menu->TearDown();
 
 	UEngine* engine = GetEngine();
@@ -126,7 +121,21 @@ void UCGameInstance::Join(const FString& InAddress)
 
 	APlayerController* playerController = GetFirstLocalPlayerController();
 	if (playerController == nullptr) return;
-	playerController->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);
+	playerController->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);*/
+
+	if (!!Menu)
+		Menu->SetServerList({ "Session1", "Session2" });
+}
+
+void UCGameInstance::RefreshServerList()
+{
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if (SessionSearch.IsValid())
+	{
+		SessionSearch->bIsLanQuery = true;
+		UE_LOG(LogTemp, Warning, TEXT("Starting Find Sessions"));
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+	}
 }
 
 void UCGameInstance::InGameLoadMenu()
@@ -149,5 +158,19 @@ void UCGameInstance::LoadMainMenu()
 
 void UCGameInstance::OnFindSessionComplete(bool InSucess)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Finished Find Session"));
+	if (InSucess == true && SessionSearch.IsValid() && Menu != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Finished Find Session"));
+
+		TArray<FString> serverNames;
+		for (const FOnlineSessionSearchResult& searchResult : SessionSearch->SearchResults)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Found Session Name : %s"), *searchResult.GetSessionIdStr());
+			UE_LOG(LogTemp, Error, TEXT("Ping : %d"), searchResult.PingInMs);
+
+			serverNames.Add(searchResult.GetSessionIdStr());
+		}
+
+		Menu->SetServerList(serverNames);
+	}
 }
