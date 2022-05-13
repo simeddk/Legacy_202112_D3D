@@ -4,7 +4,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Menu/CMainMenu.h"
 #include "Menu/CMenuWidget.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSessionSettings.h"
 
 const static FName SESSION_NAME = TEXT("GameSession");
@@ -33,6 +32,7 @@ void UCGameInstance::Init()
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnCreateSessionComplete);
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UCGameInstance::OnFindSessionComplete);
+			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UCGameInstance::OnJoinSessionComplete);
 		}
 	}
 	else
@@ -109,22 +109,35 @@ void UCGameInstance::OnDestroySessionComplete(FName InSessionName, bool InSucces
 		CreateSession();
 }
 
-void UCGameInstance::Join(const FString& InAddress)
+void UCGameInstance::Join(uint32 Index)
 {
-	/*if (!!Menu)
+	if (SessionInterface.IsValid() == false) return;
+	if (SessionSearch.IsValid() == false) return;
+
+	if (!!Menu)
 		Menu->TearDown();
+
+	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
+}
+
+void UCGameInstance::OnJoinSessionComplete(FName InSessionName, EOnJoinSessionCompleteResult::Type InResult)
+{
+	if (SessionInterface.IsValid() == false) return;
+
+	FString address;
+	if (SessionInterface->GetResolvedConnectString(InSessionName, address) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not get IP address"));
+		return;
+	}
 
 	UEngine* engine = GetEngine();
 	if (engine == nullptr) return;
-
-	engine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join to %s"), *InAddress));
+	engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Joining to %s"), *address));
 
 	APlayerController* playerController = GetFirstLocalPlayerController();
 	if (playerController == nullptr) return;
-	playerController->ClientTravel(InAddress, ETravelType::TRAVEL_Absolute);*/
-
-	if (!!Menu)
-		Menu->SetServerList({ "Session1", "Session2" });
+	playerController->ClientTravel(address, ETravelType::TRAVEL_Absolute);
 }
 
 void UCGameInstance::RefreshServerList()

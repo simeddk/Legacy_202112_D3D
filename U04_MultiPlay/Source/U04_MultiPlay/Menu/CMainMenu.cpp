@@ -36,10 +36,10 @@ bool UCMainMenu::Initialize()
 	return true;
 }
 
-//void UCMainMenu::SelectedIndex(uint32 Index)
-//{
-//	SelectedIndex = Index;
-//}
+void UCMainMenu::SelectIndex(uint32 Index)
+{
+	SelectedIndex = Index;
+}
 
 void UCMainMenu::HostServer()
 {
@@ -49,10 +49,14 @@ void UCMainMenu::HostServer()
 
 void UCMainMenu::JoinServer()
 {
-	if (!!MenuInterface)
+	if (SelectedIndex.IsSet() && MenuInterface != nullptr)
 	{
-		MenuInterface->Join("");
-		
+		UE_LOG(LogTemp, Warning, TEXT("Selected Index : %d"), SelectedIndex.GetValue());
+		MenuInterface->Join(SelectedIndex.GetValue());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Selected Index is not set"));
 	}
 }
 
@@ -63,12 +67,14 @@ void UCMainMenu::SetServerList(TArray<FString> InServerName)
 
 	ServerList->ClearChildren();
 
+	uint32 i = 0;
 	for (const FString& serverName : InServerName)
 	{
 		UCServerRow* row = CreateWidget<UCServerRow>(world, ServerRowClass);
 		if (row == nullptr) return;
 
 		row->ServerName->SetText(FText::FromString(serverName));
+		row->SetUp(this, i++);
 
 		ServerList->AddChild(row);
 	}

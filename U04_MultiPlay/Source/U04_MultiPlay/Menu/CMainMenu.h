@@ -14,7 +14,7 @@ public:
 	UCMainMenu(const FObjectInitializer& ObjectInitializer);
 
 	void SetServerList(TArray<FString> InServerName);
-	//void SelectedIndex(uint32 Index);
+	void SelectIndex(uint32 Index);
 
 protected:
 	virtual bool Initialize() override;
