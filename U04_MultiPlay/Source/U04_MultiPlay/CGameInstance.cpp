@@ -74,9 +74,10 @@ void UCGameInstance::CreateSession()
 	if (SessionInterface.IsValid())
 	{
 		FOnlineSessionSettings sessionSettings;
-		sessionSettings.bIsLANMatch = true;
+		sessionSettings.bIsLANMatch = false;
 		sessionSettings.NumPublicConnections = 2;
 		sessionSettings.bShouldAdvertise = true;
+		sessionSettings.bUsesPresence = true;
 		SessionInterface->CreateSession(0, SESSION_NAME, sessionSettings);
 	}
 }
@@ -145,7 +146,9 @@ void UCGameInstance::RefreshServerList()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = true;
+		//SessionSearch->bIsLanQuery = true;
+		SessionSearch->MaxSearchResults = 100;
+		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Starting Find Sessions"));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}

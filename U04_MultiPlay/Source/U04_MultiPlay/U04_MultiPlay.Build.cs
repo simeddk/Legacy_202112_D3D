@@ -16,7 +16,8 @@ public class U04_MultiPlay : ModuleRules
 			"InputCore",
 			"HeadMountedDisplay",
 			"UMG",
-			"OnlineSubsystem"
+			"OnlineSubsystem",
+			"OnlineSubsystemSteam"
 		});
 	}
 }
