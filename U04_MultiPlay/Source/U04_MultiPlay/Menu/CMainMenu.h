@@ -5,6 +5,17 @@
 #include "CMenuWidget.h"
 #include "CMainMenu.generated.h"
 
+USTRUCT()
+struct FServerData
+{
+	GENERATED_BODY()
+
+	FString Name;
+	uint16 CurrentPlayers;
+	uint16 MaxPlayers;
+	FString HostUserName;
+};
+
 UCLASS()
 class U04_MULTIPLAY_API UCMainMenu : public UCMenuWidget
 {
@@ -13,7 +24,7 @@ class U04_MULTIPLAY_API UCMainMenu : public UCMenuWidget
 public:
 	UCMainMenu(const FObjectInitializer& ObjectInitializer);
 
-	void SetServerList(TArray<FString> InServerName);
+	void SetServerList(TArray<FServerData> InServerName);
 	void SelectIndex(uint32 Index);
 
 protected:
@@ -37,6 +48,9 @@ private:
 	
 private:
 	TSubclassOf<class UCServerRow> ServerRowClass;
+
+private:
+	void UpdateChildren();
 
 private:
 	UPROPERTY(meta = (BindWidget))

@@ -39,6 +39,17 @@ bool UCMainMenu::Initialize()
 void UCMainMenu::SelectIndex(uint32 Index)
 {
 	SelectedIndex = Index;
+	UpdateChildren();
+}
+
+void UCMainMenu::UpdateChildren()
+{
+	for (int32 i = 0; i < ServerList->GetChildrenCount(); i++)
+	{
+		auto serverRow = Cast<UCServerRow>(ServerList->GetChildAt(i));
+		if (!!serverRow)
+			serverRow->Selected = (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i);
+	}
 }
 
 void UCMainMenu::HostServer()
@@ -60,7 +71,7 @@ void UCMainMenu::JoinServer()
 	}
 }
 
-void UCMainMenu::SetServerList(TArray<FString> InServerName)
+void UCMainMenu::SetServerList(TArray<FServerData> InServerName)
 {
 	UWorld* world = GetWorld();
 	if (world == nullptr) return;
@@ -68,12 +79,15 @@ void UCMainMenu::SetServerList(TArray<FString> InServerName)
 	ServerList->ClearChildren();
 
 	uint32 i = 0;
-	for (const FString& serverName : InServerName)
+	for (const FServerData& serverData : InServerName)
 	{
 		UCServerRow* row = CreateWidget<UCServerRow>(world, ServerRowClass);
 		if (row == nullptr) return;
 
-		row->ServerName->SetText(FText::FromString(serverName));
+		row->ServerName->SetText(FText::FromString(serverData.Name));
+		row->HostUser->SetText(FText::FromString(serverData.HostUserName));
+		FString fractionText = FString::Printf(TEXT("%d/%d"), serverData.CurrentPlayers, serverData.MaxPlayers);
+		row->ConnectionFraction->SetText(FText::FromString(fractionText));
 		row->SetUp(this, i++);
 
 		ServerList->AddChild(row);

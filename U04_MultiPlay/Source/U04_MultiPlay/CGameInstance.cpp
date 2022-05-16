@@ -74,7 +74,16 @@ void UCGameInstance::CreateSession()
 	if (SessionInterface.IsValid())
 	{
 		FOnlineSessionSettings sessionSettings;
-		sessionSettings.bIsLANMatch = false;
+
+		if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
+		{
+			sessionSettings.bIsLANMatch = true;
+		}
+		else
+		{
+			sessionSettings.bIsLANMatch = false;
+		}
+
 		sessionSettings.NumPublicConnections = 2;
 		sessionSettings.bShouldAdvertise = true;
 		sessionSettings.bUsesPresence = true;
@@ -178,13 +187,18 @@ void UCGameInstance::OnFindSessionComplete(bool InSucess)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Finished Find Session"));
 
-		TArray<FString> serverNames;
+		TArray<FServerData> serverNames;
 		for (const FOnlineSessionSearchResult& searchResult : SessionSearch->SearchResults)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Found Session Name : %s"), *searchResult.GetSessionIdStr());
 			UE_LOG(LogTemp, Error, TEXT("Ping : %d"), searchResult.PingInMs);
 
-			serverNames.Add(searchResult.GetSessionIdStr());
+			FServerData data;
+			data.Name = searchResult.GetSessionIdStr();
+			data.MaxPlayers = searchResult.Session.SessionSettings.NumPublicConnections;
+			data.CurrentPlayers = data.MaxPlayers - searchResult.Session.SessionSettings.NumPublicConnections;
+			data.HostUserName = searchResult.Session.OwningUserName;
+			serverNames.Add(data);
 		}
 
 		Menu->SetServerList(serverNames);
