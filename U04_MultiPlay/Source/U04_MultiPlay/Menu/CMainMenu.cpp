@@ -19,7 +19,13 @@ bool UCMainMenu::Initialize()
 		return false;
 
 	if (HostButton == nullptr) return false;
-	HostButton->OnClicked.AddDynamic(this, &UCMainMenu::HostServer);
+	HostButton->OnClicked.AddDynamic(this, &UCMainMenu::OpenHostMenu);
+
+	if (CancelHostMenuButton == nullptr) return false;
+	CancelHostMenuButton->OnClicked.AddDynamic(this, &UCMainMenu::OpenMainMenu);
+
+	if (ConfirmHostMenuButton == nullptr) return false;
+	ConfirmHostMenuButton->OnClicked.AddDynamic(this, &UCMainMenu::HostServer);
 
 	if (JoinButton == nullptr) return false;
 	JoinButton->OnClicked.AddDynamic(this, &UCMainMenu::OpenJoinMenu);
@@ -55,7 +61,10 @@ void UCMainMenu::UpdateChildren()
 void UCMainMenu::HostServer()
 {
 	if (!!MenuInterface)
-		MenuInterface->Host();
+	{
+		FString serverName = ServerHostName->Text.ToString();
+		MenuInterface->Host(serverName);
+	}
 }
 
 void UCMainMenu::JoinServer()
@@ -95,6 +104,20 @@ void UCMainMenu::SetServerList(TArray<FServerData> InServerName)
 }
 
 
+void UCMainMenu::OpenMainMenu()
+{
+	if (MenuSwitcher == nullptr) return;
+	if (MainMenu == nullptr) return;
+	MenuSwitcher->SetActiveWidget(MainMenu);
+}
+
+void UCMainMenu::OpenHostMenu()
+{
+	if (MenuSwitcher == nullptr) return;
+	if (HostMenu == nullptr) return;
+	MenuSwitcher->SetActiveWidget(HostMenu);
+}
+
 void UCMainMenu::OpenJoinMenu()
 {
 	if (MenuSwitcher == nullptr) return;
@@ -105,12 +128,6 @@ void UCMainMenu::OpenJoinMenu()
 		MenuInterface->RefreshServerList();
 }
 
-void UCMainMenu::OpenMainMenu()
-{
-	if (MenuSwitcher == nullptr) return;
-	if (MainMenu == nullptr) return;
-	MenuSwitcher->SetActiveWidget(MainMenu);
-}
 
 void UCMainMenu::QuitPressed()
 {

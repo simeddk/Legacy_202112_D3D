@@ -7,6 +7,7 @@
 #include "OnlineSessionSettings.h"
 
 const static FName SESSION_NAME = TEXT("GameSession");
+const static FName SESSION_NAME_SETTINGS_KEY = TEXT("ServerName");
 
 UCGameInstance::UCGameInstance(const FObjectInitializer& ObjectInitializer)
 {
@@ -52,8 +53,10 @@ void UCGameInstance::LoadMenuWidget()
 	Menu->SetUp();
 }
 
-void UCGameInstance::Host()
+void UCGameInstance::Host(FString ServerName)
 {
+	DesiredServerName = ServerName;
+
 	if (SessionInterface.IsValid())
 	{
 		auto exsistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
@@ -84,9 +87,12 @@ void UCGameInstance::CreateSession()
 			sessionSettings.bIsLANMatch = false;
 		}
 
-		sessionSettings.NumPublicConnections = 2;
+		sessionSettings.NumPublicConnections = 5;
 		sessionSettings.bShouldAdvertise = true;
 		sessionSettings.bUsesPresence = true;
+
+		sessionSettings.Set(SESSION_NAME_SETTINGS_KEY, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
 		SessionInterface->CreateSession(0, SESSION_NAME, sessionSettings);
 	}
 }
@@ -110,7 +116,7 @@ void UCGameInstance::OnCreateSessionComplete(FName InSessionName, bool InSuccess
 
 	UWorld* world = GetWorld();
 	if (world == nullptr) return;
-	world->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	world->ServerTravel("/Game/ThirdPersonCPP/Maps/Lobby?listen");
 }
 
 void UCGameInstance::OnDestroySessionComplete(FName InSessionName, bool InSuccess)
@@ -194,10 +200,20 @@ void UCGameInstance::OnFindSessionComplete(bool InSucess)
 			UE_LOG(LogTemp, Error, TEXT("Ping : %d"), searchResult.PingInMs);
 
 			FServerData data;
-			data.Name = searchResult.GetSessionIdStr();
 			data.MaxPlayers = searchResult.Session.SessionSettings.NumPublicConnections;
-			data.CurrentPlayers = data.MaxPlayers - searchResult.Session.SessionSettings.NumPublicConnections;
+			data.CurrentPlayers = data.MaxPlayers - searchResult.Session.NumOpenPublicConnections;
 			data.HostUserName = searchResult.Session.OwningUserName;
+
+			FString serverName;
+			if (searchResult.Session.SessionSettings.Get(SESSION_NAME_SETTINGS_KEY, serverName))
+			{
+				data.Name = serverName;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Server Name Not Found"));
+			}
+
 			serverNames.Add(data);
 		}
 

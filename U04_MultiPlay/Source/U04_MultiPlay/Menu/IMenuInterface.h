@@ -15,7 +15,7 @@ class U04_MULTIPLAY_API IIMenuInterface
 	GENERATED_BODY()
 
 public:
-	virtual void Host() = 0;
+	virtual void Host(FString ServerName) = 0;
 	virtual void Join(uint32 Index) = 0;
 	virtual void LoadMainMenu() = 0;
 	virtual void RefreshServerList() = 0;
