@@ -16,6 +16,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+
 	UFUNCTION(Reliable, Server, WithValidation)
 		void Server_MoveForward(float Value);
 	
@@ -56,4 +59,10 @@ private:
 
 	float Throttle;
 	float SteeringThrow;
+
+	UPROPERTY(Replicated)
+		FVector ReplicatedLocation;
+
+	UPROPERTY(Replicated)
+		FRotator ReplicatedRotation;
 };
