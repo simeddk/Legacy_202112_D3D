@@ -16,8 +16,11 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void MoveForward(float Value);
-	void MoveRight(float Value);
+	UFUNCTION(Reliable, Server, WithValidation)
+		void Server_MoveForward(float Value);
+	
+	UFUNCTION(Reliable, Server, WithValidation)
+		void Server_MoveRight(float Value);
 
 public:	
 	virtual void Tick(float DeltaTime) override;
