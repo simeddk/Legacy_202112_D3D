@@ -55,14 +55,18 @@ private:
 		float RollingCoefficient = 0.015f;
 
 private:
-	FVector Velocity;
+	UPROPERTY(Replicated)
+		FVector Velocity;
 
-	float Throttle;
-	float SteeringThrow;
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedTransform")
+		FTransform ReplicatedTransform;
+	
+	UFUNCTION()
+		void OnRep_ReplicatedTransform();
 
 	UPROPERTY(Replicated)
-		FVector ReplicatedLocation;
+		float Throttle;
 
 	UPROPERTY(Replicated)
-		FRotator ReplicatedRotation;
+		float SteeringThrow;
 };
