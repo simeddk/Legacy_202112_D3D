@@ -4,6 +4,39 @@
 #include "GameFramework/Pawn.h"
 #include "GoKart.generated.h"
 
+USTRUCT()
+struct FGoKartMove
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+		float Throttle;
+
+	UPROPERTY()
+		float SteeringThrow;
+
+	UPROPERTY()
+		float DeltaTime;
+
+	UPROPERTY()
+		float Time;
+};
+
+USTRUCT()
+struct FGoKartState
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY()
+		FTransform Transform;
+
+	UPROPERTY()
+		FVector Velocity;
+
+	UPROPERTY()
+		FGoKartMove LastMove;
+};
+
 UCLASS()
 class U05_SYNCHRONIZATION_API AGoKart : public APawn
 {
@@ -55,14 +88,13 @@ private:
 		float RollingCoefficient = 0.015f;
 
 private:
-	UPROPERTY(Replicated)
-		FVector Velocity;
+	UPROPERTY(ReplicatedUsing = "OnRep_ServerState")
+		FGoKartState ServerState;
 
-	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedTransform")
-		FTransform ReplicatedTransform;
-	
+	FVector Velocity;
+
 	UFUNCTION()
-		void OnRep_ReplicatedTransform();
+		void OnRep_ServerState();
 
 	UPROPERTY(Replicated)
 		float Throttle;
