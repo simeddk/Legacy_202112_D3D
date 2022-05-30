@@ -47,6 +47,8 @@ public:
 	FORCEINLINE void SetSteeringThrow(float Val) { SteeringThrow = Val; }
 	FORCEINLINE void SetThrottle(float Val) { Throttle = Val; }
 
+	FORCEINLINE FGoKartMove GetLastMove() { return LastMove; }
+
 private:
 	FVector GetAirResistance();
 	FVector GetRollingResistance();
@@ -74,4 +76,6 @@ private:
 
 	float Throttle;
 	float SteeringThrow;
+
+	FGoKartMove LastMove;
 };

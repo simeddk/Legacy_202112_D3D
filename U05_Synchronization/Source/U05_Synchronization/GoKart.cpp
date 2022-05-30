@@ -8,7 +8,7 @@ AGoKart::AGoKart()
 	bReplicates = true;
 
 	MovementComponent = CreateDefaultSubobject<UGoKartMovementComponent>(TEXT("MovementComponent"));
-	ReplicateComponent = CreateDefaultSubobject<UGoKartReplicateComponent>(TEXT("ReplicateComponent"));
+	//ReplicateComponent = CreateDefaultSubobject<UGoKartReplicateComponent>(TEXT("ReplicateComponent"));
 }
 
 void AGoKart::BeginPlay()

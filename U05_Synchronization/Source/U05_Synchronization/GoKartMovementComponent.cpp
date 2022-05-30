@@ -16,7 +16,9 @@ void UGoKartMovementComponent::BeginPlay()
 void UGoKartMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	
+	LastMove = CreateMove(DeltaTime);
+	SimulateMove(LastMove);
 }
 
 void UGoKartMovementComponent::SimulateMove(const FGoKartMove& Move)

@@ -21,14 +21,12 @@ void UGoKartReplicateComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 	if (MovementComponent == nullptr) return;
 
+	FGoKartMove lastMove = MovementComponent->GetLastMove();
+
 	if (GetOwnerRole() == ROLE_AutonomousProxy)
 	{
-		FGoKartMove move = MovementComponent->CreateMove(DeltaTime);
-
-		MovementComponent->SimulateMove(move);
-		UnacknowledgedMoves.Add(move);
-
-		Server_SendMove(move);
+		UnacknowledgedMoves.Add(lastMove);
+		Server_SendMove(lastMove);
 	}
 
 	if (GetOwnerRole() == ROLE_Authority && GetOwner()->GetRemoteRole() == ROLE_SimulatedProxy)
