@@ -27,7 +27,7 @@ struct FGoKartState
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY()
+	UPROPERTY()
 		FTransform Transform;
 
 	UPROPERTY()
@@ -53,11 +53,12 @@ private:
 	void MoveRight(float Value);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-		void Server_MoveForward(float Value);
-	
-	UFUNCTION(Reliable, Server, WithValidation)
-		void Server_MoveRight(float Value);
+		void Server_SendMove(FGoKartMove Move);
 
+	void SimulateMove(const FGoKartMove& Move);
+	FGoKartMove CreateMove(float DeltaTime);
+	void ClearAcknowledgeMoves(FGoKartMove LastMove);
+	
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -66,7 +67,7 @@ private:
 	FVector GetAirResistance();
 	FVector GetRollingResistance();
 	void UpdateLocationFromVelocity(float DeltaTime);
-	void ApplyRotation(float DeltaTime);
+	void ApplyRotation(float DeltaTime, float Steering);
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -96,9 +97,8 @@ private:
 	UFUNCTION()
 		void OnRep_ServerState();
 
-	UPROPERTY(Replicated)
-		float Throttle;
+	float Throttle;
+	float SteeringThrow;
 
-	UPROPERTY(Replicated)
-		float SteeringThrow;
+	TArray<FGoKartMove> UnacknowledgedMoves;
 };
