@@ -38,8 +38,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SimulateMove(const FGoKartMove& Move);
-	FGoKartMove CreateMove(float DeltaTime);
-
+	
 public:
 	FORCEINLINE FVector GetVelocity() { return Velocity; }
 	FORCEINLINE void SetVelocity(FVector Val) { Velocity = Val; }
@@ -50,6 +49,7 @@ public:
 	FORCEINLINE FGoKartMove GetLastMove() { return LastMove; }
 
 private:
+	FGoKartMove CreateMove(float DeltaTime);
 	FVector GetAirResistance();
 	FVector GetRollingResistance();
 	void UpdateLocationFromVelocity(float DeltaTime);
