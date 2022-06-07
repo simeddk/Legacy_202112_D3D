@@ -40,9 +40,9 @@ void UGoKartMovementComponent::SimulateMove(const FGoKartMove& Move)
 FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 {
 	FGoKartMove move;
-	move.DeltaTime = DeltaTime;
+	move.DeltaTime = DeltaTime * TimeCheatValue;
 	move.SteeringThrow = SteeringThrow;
-	move.Throttle = Throttle;
+	move.Throttle = Throttle * MoveCheatValue;
 	move.Time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
 
 	return move;

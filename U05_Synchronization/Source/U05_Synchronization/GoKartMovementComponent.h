@@ -21,6 +21,11 @@ struct FGoKartMove
 
 	UPROPERTY()
 		float Time;
+
+	bool IsValid() const
+	{
+		return FMath::Abs(Throttle) <= 1 && FMath::Abs(SteeringThrow) <= 1;
+	}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -78,4 +83,11 @@ private:
 	float SteeringThrow;
 
 	FGoKartMove LastMove;
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float MoveCheatValue = 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float TimeCheatValue = 1;
 };

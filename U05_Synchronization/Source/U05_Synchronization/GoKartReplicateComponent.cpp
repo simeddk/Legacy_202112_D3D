@@ -1,5 +1,6 @@
 #include "GoKartReplicateComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/GameState.h"
 
 UGoKartReplicateComponent::UGoKartReplicateComponent()
 {
@@ -71,7 +72,9 @@ FHermiteCubeSpline UGoKartReplicateComponent::CreateSpline()
 void UGoKartReplicateComponent::InterpolateLocation(const FHermiteCubeSpline& Spline, float LerpRatio)
 {
 	FVector newLocation = Spline.InterpolateLocation(LerpRatio);
-	GetOwner()->SetActorLocation(newLocation);
+	
+	if (!!MeshOffsetRoot)
+		MeshOffsetRoot->SetWorldLocation(newLocation);
 }
 
 void UGoKartReplicateComponent::InterpolateVelocity(const FHermiteCubeSpline& Spline, float LerpRatio)
@@ -86,7 +89,9 @@ void UGoKartReplicateComponent::InterpolateRotation(float LerpRatio)
 	FQuat startRotation = ClientStartTransform.GetRotation();
 	FQuat targetRotation = ServerState.Transform.GetRotation();
 	FQuat newRotation = FQuat::Slerp(startRotation, targetRotation, LerpRatio);
-	GetOwner()->SetActorRotation(newRotation);
+	
+	if (!!MeshOffsetRoot)
+		MeshOffsetRoot->SetWorldRotation(newRotation);
 }
 
 float UGoKartReplicateComponent::VelocityToDerivative()
@@ -131,8 +136,12 @@ void UGoKartReplicateComponent::Simulate_OnRep_ServerState()
 	ClientTimeBetweenLastUpdate = ClientTimeSinceUpdate;
 	ClientTimeSinceUpdate = 0;
 
-	ClientStartTransform = GetOwner()->GetActorTransform();
+	if (!!MeshOffsetRoot)
+		ClientStartTransform = MeshOffsetRoot->GetComponentTransform();
+
 	ClientStartVelocity = MovementComponent->GetVelocity();
+
+	GetOwner()->SetActorTransform(ServerState.Transform);
 }
 
 void UGoKartReplicateComponent::ClearAcknowledgeMoves(FGoKartMove LastMove)
@@ -161,11 +170,27 @@ void UGoKartReplicateComponent::Server_SendMove_Implementation(FGoKartMove Move)
 {
 	if (MovementComponent == nullptr) return;
 
+	ClientSimulatedTime += Move.DeltaTime;
+
 	MovementComponent->SimulateMove(Move);
 	UpdateServerState(Move);
 }
 
 bool UGoKartReplicateComponent::Server_SendMove_Validate(FGoKartMove Move)
 {
+	float progressedTime = ClientSimulatedTime;
+	bool clientNotRunningAhead = progressedTime < GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	if (clientNotRunningAhead == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TOO FAST TIME!!!!"));
+		return false;
+	}
+
+	if (Move.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("INVALID MOVE!!!!"));
+		return false;
+	}
+
 	return true;
 }

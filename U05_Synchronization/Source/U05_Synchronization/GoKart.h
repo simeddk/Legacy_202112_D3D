@@ -25,10 +25,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
-	UPROPERTY(VisibleDefaultsOnly)
+public:
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 		UGoKartMovementComponent* MovementComponent;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 		UGoKartReplicateComponent* ReplicateComponent;
 };

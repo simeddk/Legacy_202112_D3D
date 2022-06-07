@@ -22,8 +22,11 @@ struct FGoKartState
 
 struct FHermiteCubeSpline
 {
-	FVector StartLocation, StartDerivative, TargetLocation, TargetDerivative;
-
+	FVector StartLocation; 
+	FVector StartDerivative;
+	FVector	TargetLocation;
+	FVector TargetDerivative;
+	
 	FVector InterpolateLocation(float LerpRatio) const
 	{
 		return FMath::CubicInterp(StartLocation, StartDerivative, TargetLocation, TargetDerivative, LerpRatio);
@@ -66,8 +69,7 @@ private:
 	UPROPERTY(ReplicatedUsing = "OnRep_ServerState")
 		FGoKartState ServerState;
 
-	UFUNCTION()
-		void OnRep_ServerState();
+	UFUNCTION()	void OnRep_ServerState();
 	void AutonomousProxy_OnRep_ServerState();
 	void Simulate_OnRep_ServerState();
 
@@ -78,6 +80,15 @@ private:
 	FTransform ClientStartTransform;
 	FVector ClientStartVelocity;
 
+	float ClientSimulatedTime;
+
 	UPROPERTY()
 		UGoKartMovementComponent* MovementComponent;
+
+	UPROPERTY()
+		class USceneComponent* MeshOffsetRoot;
+
+	UFUNCTION(BlueprintCallable)
+		void SetMeshOffsetRoot(class USceneComponent* Scene) { MeshOffsetRoot = Scene; }
+
 };
