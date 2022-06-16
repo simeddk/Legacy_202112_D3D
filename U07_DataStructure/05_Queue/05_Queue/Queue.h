@@ -21,6 +21,43 @@ public:
 		return node;
 	}
 
+	static void DestoryNode(Node* node)
+	{
+		delete node;
+		node = nullptr;
+	}
+
+	void Enqueue(Node* node)
+	{
+		if (front == nullptr)
+		{
+			front = node;
+			rear = node;
+			size++;
+
+			return;
+		}
+
+		rear->Next = node;
+		rear = node;
+		size++;
+	}
+
+	Node* Dequeue()
+	{
+		Node* node = front;
+
+		if (front->Next == nullptr)
+			front = rear = nullptr;
+		else
+			front = front->Next;
+
+		return node;
+	}
+
+	bool IsEmpty() { return front == nullptr; }
+	int Size() { return size; }
+
 private:
 	struct Node
 	{
