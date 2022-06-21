@@ -44,7 +44,14 @@ float Calc(BinaryTree<char>::Node* node)
 			float left = Calc(node->Left);
 			float right = Calc(node->Right);
 
-			//Todo. 실제 계산 코드
+			switch (node->Data)
+			{
+				case '+': return left + right;
+				case '-': return left - right;
+				case '*': return left * right;
+				case '/': return left / right;
+				case '%': return (int)left % (int)right;
+			}
 		}
 		break;
 
@@ -54,7 +61,6 @@ float Calc(BinaryTree<char>::Node* node)
 			memset(temp, '\0', sizeof(temp));
 
 			temp[0] = node->Data;
-
 
 			return atof(temp);
 		}
@@ -67,7 +73,9 @@ int main()
 {
 	BinaryTree<char>::Node* root = nullptr;
 	
-	string postfix = "12*34*-";
+	//string postfix = "12*34*-";
+	//string postfix = "34+57-*"; //3 + 4 * 5 - 7 -> 7 * -2 -> -14
+	string postfix = "91-34*+";
 	MakeTree(postfix.c_str(), &root);
 
 #ifndef Order
