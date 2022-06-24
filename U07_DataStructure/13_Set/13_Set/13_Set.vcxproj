@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a0d9d6a7-46b7-449f-8bb2-734363887f40}</ProjectGuid>
-    <RootNamespace>My10BinarySearchTree</RootNamespace>
+    <ProjectGuid>{ac824ba6-8e94-4597-935d-74421f47a330}</ProjectGuid>
+    <RootNamespace>My13Set</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,10 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BinarySearchTree.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="BinarySearchTree.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
