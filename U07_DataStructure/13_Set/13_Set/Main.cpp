@@ -1,23 +1,35 @@
 #include <stdio.h>
 #include <Windows.h>
 #include <set>
-#include <map>
-#include <unordered_map>
 #include <string>
 using namespace std;
 
+struct Compare
+{
+	template<typename T>
+	bool operator()(const T& left, const T& right)
+	{
+		if (left.first == right.first) //fist가 같은 경우 second 기준으로 정렬할 수 있음
+			return left.second > right.second; // < 오름차순, > 내림차순 
+
+		return left.first > right.first; // < 오름차순, > 내림차순 
+	}
+};
+
 int main()
 {
-	//unordered
-	map<string, int> m;
-	m["나의 가치"] = 100; //insert? create? push???
-	m["너의 가치"] = 0;
-	m["우리의 가치"] = 999;
-	m["너희의 가치"] = -999;
-	m["너희의 가치"] = 77777777;
+	set<int> s = {5, 2, 4, 6, 1, 2};
+	for (int i : s)
+		printf("%d, ", i);
+	printf("\n");
 
-	for (map<string, int>::iterator it = m.begin(); it != m.end(); ++it)
-		printf("%s, %d\n", it->first.c_str(), it->second);
+	set<pair<string, int>, Compare> s2 =
+	{
+		{"B", 4},  {"E", 2}, {"A", 5}, {"D", 1}, {"B", 5}
+	};
+	for (pair<string, int> i : s2)
+		printf("%s, %d\n", i.first.c_str(), i.second);
+
 
 	system("pause");
 	return 0;
