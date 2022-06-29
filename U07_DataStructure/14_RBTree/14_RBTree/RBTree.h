@@ -72,6 +72,72 @@ private:
 		}
 	}
 
+	void RebuildInsert(Node** root, Node* node)
+	{
+		while (node != (*root) && node->Parent->Color == Color::Red)
+		{
+			//위반노드의 부모가 Left인 경우
+			if (node->Parent == node->Parent->Parent->Left)
+			{
+				Node* uncle = node->Parent->Parent->Right;
+
+				//삽입 규칙1.(삼촌이 Red인 경우 -> 부모와 삼촌을 Black, 할아버지를 Red로)
+				if (uncle->Color == Color::Red)
+				{
+					node->Parent->Color = Color::Black;
+					uncle->Color = Color::Black;
+					node->Parent->Parent->Color = Color::Red;
+
+					node = node->Parent->Parent;
+				}
+				else //삼촌이 Black인 경우
+				{
+					//삽입규칙2.(삼촌이 Black, node가 Right에 붙은 경우)
+					if (node == node->Parent->Right)
+					{
+						node = node->Parent;
+						RotateLeft(root, node);
+					}
+					
+					//삽입규칙3.(삼촌이 Black, node가 Left에 붙은 경우)
+					node->Parent->Color = Color::Black;
+					node->Parent->Parent->Color = Color::Red;
+					RotateRight(root, node->Parent->Parent);
+				}
+			} 
+			//위반노드의 부모가 Right인 경우
+			else
+			{
+				Node* uncle = node->Parent->Parent->Left;
+
+				//삽입 규칙1.(삼촌이 Red인 경우 -> 부모와 삼촌을 Black, 할아버지를 Red로)
+				if (uncle->Color == Color::Red)
+				{
+					node->Parent->Color = Color::Black;
+					uncle->Color = Color::Black;
+					node->Parent->Parent->Color = Color::Red;
+
+					node = node->Parent->Parent;
+				}
+				else //삼촌이 Black인 경우
+				{
+					//삽입규칙2.(삼촌이 Black, node가 Right에 붙은 경우)
+					if (node == node->Parent->Left)
+					{
+						node = node->Parent;
+						RotateRight(root, node);
+					}
+
+					//삽입규칙3.(삼촌이 Black, node가 Left에 붙은 경우)
+					node->Parent->Color = Color::Black;
+					node->Parent->Parent->Color = Color::Red;
+					RotateLeft(root, node->Parent->Parent);
+				}
+			}
+		}
+
+		(*root)->Color = Color::Black;
+	}
 
 public:
 	void Insert(Node** node, Node* newNode)
@@ -89,7 +155,17 @@ public:
 		newNode->Color = Color::Red;
 		newNode->Left = nil;
 		newNode->Right = nil;
+
+		RebuildInsert(node, newNode);
 	}
+
+	//삭제 규칙(5가지)
+	//(1) 형제가 Red인 경우 -> 부모를 Red로, 형제를 Black -> 왼쪽에 있었다면 부모 기준 좌회전, 오른쪽에 있었다면 부모 기준 우회전
+	//(2) 형제가 Black인 경우 -> 아래 세가지로 파생
+	//(2-1) 형제의 양쪽 자식이 모두 Black인 경우 -> 형제를 Red로
+	//(2-2) 형제의 왼쪽 자식만 Red -> 형제의 왼쪽 자식을 Black, 형제를 Red, 형제를 기준으로 우회전
+	//(2-3) 형제의 오른쪽 자식만 Red -> 부모를 Black으로, 형제의 오른쪽을 Black으로, 부모 기준 좌회전
+
 
 	void RotateRight(Node** root, Node* pivot)
 	{
@@ -99,15 +175,78 @@ public:
 		if (left->Right != nil)
 			left->Right->Parent = pivot;
 
-		if (parent->Parent != nullptr)
+		left->Parent = pivot->Parent;
+
+		if (pivot->Parent != nullptr)
 		{
-			if (parent == parent->Parent->Left)
-				parent->Parent->Left = left;
+			if (pivot == pivot->Parent->Left)
+				pivot->Parent->Left = left;
 			else
-				parent->Parent->Right = left;
+				pivot->Parent->Right = left;
 		}
 		else
-			*pivot = left;
+			*root = left;
+
+		left->Right = pivot;
+
+		pivot->Parent = left;
+	}
+
+	void RotateLeft(Node** root, Node* pivot)
+	{
+		Node* right = pivot->Right;
+		pivot->Right = right->Left;
+
+		if (right->Left != nil)
+			right->Left->Parent = pivot;
+
+		right->Parent = pivot->Parent;
+
+		if (pivot->Parent != nullptr)
+		{
+			if (pivot == pivot->Parent->Left)
+				pivot->Parent->Left = right;
+			else
+				pivot->Parent->Right = right;
+		}
+		else
+			*root = right;
+
+		right->Left = pivot;
+
+		pivot->Parent = right;
+	}
+
+	void Print(Node* node, int depth)
+	{
+		if (node == nullptr || node == nil) return;
+
+		if (node->Color == Color::Red)
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
+		else 
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+
+		T parent = -1;
+		char d = 'X';
+		if (node->Parent != nullptr)
+		{
+			parent = node->Parent->Data;
+
+			if (node->Parent->Left == node)
+				d = 'L';
+			else
+				d = 'R';
+		}
+
+		string depthBar = "";
+
+		for (int i = 0; i < depth; i++)
+			depthBar += " - ";
+
+		printf("%s %d [%c,%d]\n", depthBar.c_str(), node->Data, d, parent);
+
+		Print(node->Left, depth + 1);
+		Print(node->Right, depth + 1);
 	}
 
 public:
