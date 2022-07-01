@@ -1,6 +1,9 @@
 #pragma once
 
 #include "PQueue.h"
+#include "DisjointSet.h"
+
+#define MAX_GRAPH_WEIGHT 1e+6f
 
 template<typename T>
 class Graph
@@ -44,11 +47,45 @@ public:
 			node->Edge = edge;
 	}
 
+	void Print()
+	{
+		Node* node = nullptr;
+		Edge* edge = nullptr;
+
+		if ((node = nodes) == nullptr)
+			return;
+
+		while (node != nullptr)
+		{
+			printf("from %c -> ", node->Data);
+
+			if ((edge = node->Edge) == nullptr)
+			{
+				node = node->Next;
+				printf("\n");
+
+				continue;
+			}
+
+			while (edge != nullptr)
+			{
+				printf("to %c (%3d), ", edge->Target->Data, (int)edge->Weight);
+				edge = edge->Next;
+			}
+
+			printf("\n");
+
+			node = node->Next;
+		}
+
+		printf("\n");
+	}
+
 public:
 	void Prim(Node* startNode, Graph<T>* graph)
 	{
 		PQueue<Node*> queue(10);
-		PQueue<Node*> startQNode = PQueue<Node*>::Node(0, startNode);
+		PQueue<Node*>::Node startQNode = PQueue<Node*>::Node(0, startNode);
 
 		Node* currNode = nullptr;
 		Edge* currEdge = nullptr;
@@ -62,13 +99,94 @@ public:
 		currNode = nodes;
 		while (currNode != nullptr)
 		{
-			//TODO. 위에 있는 배열 4개를 ZeroMemory..는 내일
+			Graph<T>::Node* newNode = CreateNode(currNode->Data);
+			graph->AddNode(newNode);
+
+			visited[i] = nullptr;
+			precedences[i] = nullptr;
+			mstNodes[i] = newNode;
+			weights[i] = MAX_GRAPH_WEIGHT;
 
 			currNode = currNode->Next;
 			i++;
 		}
-	}
 
+		queue.Enqueue(startQNode);
+		weights[startNode->Index] = 0;
+
+		while (queue.IsEmpty() == false)
+		{
+			PQueue<Node*>::Node poped = queue.Dequeue();
+
+			currNode = poped.Data;
+			visited[currNode->Index] = currNode;
+
+			currEdge = currNode->Edge;
+			while (currEdge != nullptr)
+			{
+				Node* targetNode = currEdge->Target;
+
+				if (visited[targetNode->Index] == nullptr &&
+					currEdge->Weight < weights[targetNode->Index])
+				{
+					PQueue<Node*>::Node newNode = PQueue<Node*>::Node((int)currEdge->Weight, targetNode);
+					queue.Enqueue(newNode);
+
+					precedences[targetNode->Index] = currEdge->Start;
+					weights[targetNode->Index] = currEdge->Weight;
+				}
+
+				currEdge = currEdge->Next;
+			}
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			int start, target;
+
+			if (precedences[i] == nullptr)
+				continue;
+
+			start = precedences[i]->Index;
+			target = i;
+
+			graph->AddEdge(mstNodes[start], Graph<T>::CreateEdge(mstNodes[start], mstNodes[target], weights[i]));
+			graph->AddEdge(mstNodes[target], Graph<T>::CreateEdge(mstNodes[target], mstNodes[start], weights[i]));
+
+			printf("%c -> %c, %3d\n", mstNodes[start]->Data, mstNodes[target]->Data, weights[i]);
+		}
+		printf("\n");
+
+		delete[] visited;
+		delete[] precedences;
+		delete[] mstNodes;
+		delete[] weights;
+
+	}
+	void Kruskal(Graph<T>* graph)
+	{
+		Node** mstNodes = new Node*[count];
+		DisjointSet<Node*>::Set** sets = new DisjointSet<Node*>[count];
+
+		PQueue<Edge*> queue;
+
+		int i = 0;
+		Node* currNode = nodes;
+		Edge* currEdge = nullptr;
+
+		while (currNode != nullptr)
+		{
+			sets[i] = DisjointSet<Node*>::CreateSet(currNode);
+			mstNodes[i] = CreateNode(currNode->Data);
+			graph->AddNode(mstNodes[i]);
+
+			//TODO: 그래프 노드들 -> mstNodes라는 곳에 생성 -> Out 그래프(MST)에 복사해줌
+			//-> currNode에 붙어 있는 Edge들을 얻어옴 -> PQueue -> 오름차순 -> 합집합(Disjoint)
+
+			currNode = currNode->Next;
+		}
+
+	}
 
 public:
 	static Node* CreateNode(T data)
@@ -124,8 +242,6 @@ private:
 		Edge* Edge = nullptr;
 	};
 
-public:
-	std::list<Node*> GetList() { return linkedList; }
 
 private:
 	Node* nodes = nullptr;

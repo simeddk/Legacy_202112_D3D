@@ -59,6 +59,10 @@ int main()
 
 	graph.AddEdge(I, Graph<char>::CreateEdge(I, G, 106));
 
+	Graph<char> mst;
+	graph.Prim(B, &mst);
+	mst.Print();
+
 	system("pause");
 	return 0;
 }

@@ -122,6 +122,8 @@ public:
 		printf("\n");
 	}
 
+
+
 private:
 	struct Node
 	{
@@ -144,6 +146,8 @@ private:
 public:
 	int Size() { return size; }
 	Node* Nodes() { return nodes; }
+
+	bool IsEmpty() { return size < 1; }
 
 private:
 	Node* nodes;

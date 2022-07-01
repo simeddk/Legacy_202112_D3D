@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClInclude Include="Graph.h" />
     <ClInclude Include="PQueue.h" />
+    <ClInclude Include="DisjointSet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MST.cpp" />
