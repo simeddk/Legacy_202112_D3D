@@ -3,6 +3,8 @@
 
 #include "Graph.h"
 
+#define Duplex
+
 int main()
 {
 	Graph<char> graph;
@@ -26,6 +28,7 @@ int main()
 	graph.AddNode(H);
 	graph.AddNode(I);
 
+#ifndef Duplex
 	graph.AddEdge(A, Graph<char>::CreateEdge(A, B, 35));
 	graph.AddEdge(A, Graph<char>::CreateEdge(A, E, 247));
 
@@ -58,10 +61,39 @@ int main()
 	graph.AddEdge(H, Graph<char>::CreateEdge(H, F, 120));
 
 	graph.AddEdge(I, Graph<char>::CreateEdge(I, G, 106));
+#endif
 
-	Graph<char> mst;
-	graph.Prim(B, &mst);
-	mst.Print();
+#ifndef Simplex
+	graph.AddEdge(A, Graph<char>::CreateEdge(A, E, 247));
+
+	graph.AddEdge(B, Graph<char>::CreateEdge(B, A, 35));
+	graph.AddEdge(B, Graph<char>::CreateEdge(B, C, 126));
+	graph.AddEdge(B, Graph<char>::CreateEdge(B, F, 150));
+
+	graph.AddEdge(C, Graph<char>::CreateEdge(C, D, 117));
+	graph.AddEdge(C, Graph<char>::CreateEdge(C, F, 162));
+	graph.AddEdge(C, Graph<char>::CreateEdge(C, G, 220));
+
+	graph.AddEdge(E, Graph<char>::CreateEdge(E, H, 98));
+
+	graph.AddEdge(F, Graph<char>::CreateEdge(F, E, 82));
+	graph.AddEdge(F, Graph<char>::CreateEdge(F, G, 154));
+	graph.AddEdge(F, Graph<char>::CreateEdge(F, H, 120));
+
+	graph.AddEdge(G, Graph<char>::CreateEdge(G, I, 106));
+#endif
+
+	//Graph<char> mst;
+	//graph.Prim(B, &mst);
+	//mst.Print();
+
+	//Graph<char> mst;
+	//graph.Kruskal(&mst);
+	//mst.Print();
+
+	Graph<char> dijkstra;
+	graph.Dijkstra(B, &dijkstra);
+	dijkstra.Print();
 
 	system("pause");
 	return 0;

@@ -166,7 +166,7 @@ public:
 	void Kruskal(Graph<T>* graph)
 	{
 		Node** mstNodes = new Node*[count];
-		DisjointSet<Node*>::Set** sets = new DisjointSet<Node*>[count];
+		DisjointSet<Node*>::Set** sets = new DisjointSet<Node*>::Set*[count];
 
 		PQueue<Edge*> queue;
 
@@ -180,12 +180,117 @@ public:
 			mstNodes[i] = CreateNode(currNode->Data);
 			graph->AddNode(mstNodes[i]);
 
-			//TODO: 그래프 노드들 -> mstNodes라는 곳에 생성 -> Out 그래프(MST)에 복사해줌
-			//-> currNode에 붙어 있는 Edge들을 얻어옴 -> PQueue -> 오름차순 -> 합집합(Disjoint)
+			currEdge = currNode->Edge;
+			while (currEdge != nullptr)
+			{
+				PQueue<Edge*>::Node newNode = PQueue<Edge*>::Node(currEdge->Weight, currEdge);
+				queue.Enqueue(newNode);
+
+				currEdge = currEdge->Next;
+			}
+
+			currNode = currNode->Next;
+			i++;
+		}
+
+		while (queue.IsEmpty() == false)
+		{
+			PQueue<Edge*>::Node poped = queue.Dequeue();
+			currEdge = poped.Data;
+
+			int start = currEdge->Start->Index;
+			int target = currEdge->Target->Index;
+
+			if (DisjointSet<Node*>::IsSameGroup(sets[start], sets[target]) == false)
+			{
+				graph->AddEdge(mstNodes[start], Graph<char>::CreateEdge(mstNodes[start], mstNodes[target], currEdge->Weight));
+				graph->AddEdge(mstNodes[target], Graph<char>::CreateEdge(mstNodes[target], mstNodes[start], currEdge->Weight));
+
+				DisjointSet<Node*>::UinionSet(sets[start], sets[target]);
+			}
+		}
+
+		delete[] sets;
+		delete[] mstNodes;
+	}
+	void Dijkstra(Node* startNode, Graph<T>* graph)
+	{
+		PQueue<Node*> queue(10);
+		PQueue<Node*>::Node startQNode = PQueue<Node*>::Node(0, startNode);
+
+		int* weights = new int[count];
+		Node** ways = new Node * [count];
+		Node** visited = new Node * [count];
+		Node** precedences = new Node * [count];
+
+		Node* currNode = nodes;
+		Edge* currEdge = nullptr;
+
+		for (int i = 0; currNode != nullptr; i++)
+		{
+			Node* newNode = CreateNode(currNode->Data);
+			graph->AddNode(newNode);
+
+			weights[i] = MAX_GRAPH_WEIGHT;
+			ways[i] = newNode;
+			visited[i] = nullptr;
+			precedences[i] = nullptr;
 
 			currNode = currNode->Next;
 		}
 
+		queue.Enqueue(startQNode);
+		weights[startNode->Index] = 0;
+
+		while (queue.IsEmpty() == false)
+		{
+			PQueue<Node*>::Node poped = queue.Dequeue();
+
+			currNode = poped.Data;
+			visited[currNode->Index] = currNode;
+
+			currEdge = currNode->Edge;
+			while (currEdge != nullptr)
+			{
+				Node* targetNode = currEdge->Target;
+
+				bool b = true;
+				b &= visited[targetNode->Index] == nullptr;
+				b &= weights[currNode->Index] + currEdge->Weight < weights[targetNode->Index];
+
+				if (b == true)
+				{
+					PQueue<Node*>::Node newNode = PQueue<Node*>::Node((int)currEdge->Weight, targetNode);
+					queue.Enqueue(newNode);
+
+					precedences[targetNode->Index] = currEdge->Start;
+					weights[targetNode->Index] = weights[currNode->Index] + currEdge->Weight;
+				}
+
+				currEdge = currEdge->Next;
+			}
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			int start, target;
+
+			if (precedences[i] == nullptr)
+				continue;
+
+			start = precedences[i]->Index;
+			target = i;
+
+			graph->AddEdge(ways[start], Graph<T>::CreateEdge(ways[start], ways[target], weights[i]));
+
+			printf("%c -> %c, %3d\n", ways[start]->Data, ways[target]->Data, weights[i]);
+		}
+		printf("\n");
+
+		delete[] visited;
+		delete[] precedences;
+		delete[] ways;
+		delete[] weights;
 	}
 
 public:
