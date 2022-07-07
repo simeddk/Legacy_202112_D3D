@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2fba63cb-3e5f-4d76-bba9-d16c2f299e75}</ProjectGuid>
-    <RootNamespace>My20DevideConquer</RootNamespace>
+    <ProjectGuid>{d21e3ef4-44c0-4c20-91b9-c558f4fcc258}</ProjectGuid>
+    <RootNamespace>My21DynamicPlanning</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,16 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Fibonacci.cpp" />
-    <ClCompile Include="MergeSort.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Power.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClInclude Include="Fibonacci_DevideConquer.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Timer.h" />
+    <ClCompile Include="Fibonacci_DynamicPlanning.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="LCS.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

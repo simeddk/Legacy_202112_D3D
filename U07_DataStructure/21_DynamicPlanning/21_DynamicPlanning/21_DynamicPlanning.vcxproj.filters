@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="MergeSort.cpp" />
-    <ClCompile Include="Power.cpp" />
-    <ClCompile Include="Fibonacci.cpp" />
+    <ClInclude Include="Fibonacci_DevideConquer.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Timer.h" />
+    <ClCompile Include="Fibonacci_DynamicPlanning.cpp" />
+    <ClCompile Include="LCS.cpp" />
   </ItemGroup>
 </Project>
