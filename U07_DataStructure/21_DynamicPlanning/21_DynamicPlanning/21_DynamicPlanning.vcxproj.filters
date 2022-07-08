@@ -7,5 +7,6 @@
   <ItemGroup>
     <ClCompile Include="Fibonacci_DynamicPlanning.cpp" />
     <ClCompile Include="LCS.cpp" />
+    <ClCompile Include="LCS_DynamicPlanning.cpp" />
   </ItemGroup>
 </Project>
