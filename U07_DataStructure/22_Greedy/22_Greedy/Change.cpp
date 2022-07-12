@@ -34,6 +34,14 @@ void PrintChange(int coinUnit[], int change[], int unitCount)
 		printf("%d원 : %d개\n", coinUnit[i], change[i]);
 }
 
+int Compare(const void* a, const void* b)
+{
+	int A = *(int*)a;
+	int B = *(int*)b;
+
+	return A < B ? 1 : -1;
+}
+
 int main()
 {
 	int unitCount; //동전의 종류 개수
@@ -50,7 +58,7 @@ int main()
 		scanf_s("%d", &coinUnit[i]);
 	}
 
-	//coinUnit -> sort
+	qsort(coinUnit, unitCount, sizeof(int), Compare);
 
 	int price = 0;
 	printf("물건 가격 : ");
