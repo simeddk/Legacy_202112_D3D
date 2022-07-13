@@ -4,5 +4,10 @@
     <ClCompile Include="01_Thread.cpp" />
     <ClCompile Include="02_Sum.cpp" />
     <ClCompile Include="03_RaceCondition.cpp" />
+    <ClCompile Include="04_Deadlock.cpp" />
+    <ClCompile Include="05_Provider_Comsumer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
 </Project>
