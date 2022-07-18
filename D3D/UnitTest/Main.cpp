@@ -2,9 +2,12 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
+#include "VertexLineDemo.h"
+#include "VertexLineColorDemo.h"
+
 void Main::Initialize()
 {
-
+	Push(new VertexLineColorDemo());
 }
 
 
