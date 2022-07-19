@@ -4,10 +4,12 @@
 
 #include "VertexLineDemo.h"
 #include "VertexLineColorDemo.h"
+#include "VertexLine2Demo.h"
+#include "TriangleDemo.h"
 
 void Main::Initialize()
 {
-	Push(new VertexLineColorDemo());
+	Push(new TriangleDemo());
 }
 
 

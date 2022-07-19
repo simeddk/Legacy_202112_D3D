@@ -3,15 +3,41 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="VertexLineDemo.cpp" />
-    <ClCompile Include="VertexLineColorDemo.cpp" />
-    <ClCompile Include="VertexLine2Demo.cpp" />
+    <ClCompile Include="VertexLine2Demo.cpp">
+      <Filter>Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexLineColorDemo.cpp">
+      <Filter>Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexLineDemo.cpp">
+      <Filter>Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleDemo.cpp">
+      <Filter>Polygon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="VertexLineDemo.h" />
-    <ClInclude Include="VertexLineColorDemo.h" />
-    <ClInclude Include="VertexLine2Demo.h" />
+    <ClInclude Include="VertexLine2Demo.h">
+      <Filter>Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexLineColorDemo.h">
+      <Filter>Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexLineDemo.h">
+      <Filter>Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleDemo.h">
+      <Filter>Polygon</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Vertex">
+      <UniqueIdentifier>{585b92b3-754e-434a-af4f-78282b03869e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Polygon">
+      <UniqueIdentifier>{2490e4a4-26c4-41f3-8d28-292a8787de94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

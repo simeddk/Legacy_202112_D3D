@@ -11,8 +11,8 @@ void VertexLine2Demo::Initialize()
 	vertices[2].Position = Vector3(0, 0.5f, 0);
 	vertices[3].Position = Vector3(1, 0.5f, 0);
 
-	vertices[2].Position = Vector3(0, -0.5f, 0);
-	vertices[3].Position = Vector3(1, -0.5f, 0);
+	vertices[4].Position = Vector3(0, -0.5f, 0);
+	vertices[5].Position = Vector3(1, -0.5f, 0);
 
 	D3D11_BUFFER_DESC desc;
 	ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
@@ -42,8 +42,37 @@ void VertexLine2Demo::Render()
 	UINT offset = 0;
 
 	D3D::GetDC()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	D3D::GetDC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-	shader->Draw(0, 0, 6);
+	//Topology Test
+	{
+		static bool bLineStrip = false;
+		ImGui::Checkbox("LineStrip", &bLineStrip);
+
+		D3D11_PRIMITIVE_TOPOLOGY topologies[2] =
+		{
+			D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
+			D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP
+		};
+
+		D3D::GetDC()->IASetPrimitiveTopology(bLineStrip ? topologies[1] : topologies[0]);
+	}
+
+	//Pass Test
+	static UINT pass = 0;
+	{
+		ImGui::InputInt("Pass", (int*)&pass);
+		pass = (UINT)Math::Clamp(pass, 0, 3);
+
+		static Color color = Color(1, 1, 1, 1);
+		ImGui::ColorEdit3("Line Color", color);
+		shader->AsVector("Color")->SetFloatVector(color);
+	}
+
+	//StartLocation Test
+	static UINT startLocation = 0;
+	{
+		ImGui::SliderInt("Start Location", (int*)&startLocation, 0, 6);
+	}
+
+	shader->Draw(0, pass, 6, startLocation);
 }
-//TODO. pass.fx 작성해야 함
