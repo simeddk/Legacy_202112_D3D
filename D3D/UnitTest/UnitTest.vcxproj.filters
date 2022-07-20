@@ -15,6 +15,21 @@
     <ClCompile Include="TriangleDemo.cpp">
       <Filter>Polygon</Filter>
     </ClCompile>
+    <ClCompile Include="RectDemo.cpp">
+      <Filter>Polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBufferDemo.cpp">
+      <Filter>Polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldDemo.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiWorldDemo.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="GridDemo.cpp">
+      <Filter>Polygon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h" />
@@ -31,6 +46,21 @@
     <ClInclude Include="TriangleDemo.h">
       <Filter>Polygon</Filter>
     </ClInclude>
+    <ClInclude Include="RectDemo.h">
+      <Filter>Polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBufferDemo.h">
+      <Filter>Polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldDemo.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiWorldDemo.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="GridDemo.h">
+      <Filter>Polygon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Vertex">
@@ -38,6 +68,9 @@
     </Filter>
     <Filter Include="Polygon">
       <UniqueIdentifier>{2490e4a4-26c4-41f3-8d28-292a8787de94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{039c5fb5-efa6-4601-b56e-9c13b935e27e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

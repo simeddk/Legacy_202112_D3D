@@ -62,6 +62,14 @@ void TriangleDemo::Render()
 	D3D::GetDC()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	shader->Draw(0, 0, 3);
 
+	static int pass = 0;
+	ImGui::InputInt("Pass", &pass);
+	pass = (UINT)Math::Clamp(pass, 0, 3);
+
+	static Color color;
+	ImGui::ColorEdit3("Color", color);
+	shader->AsVector("Color")->SetFloatVector(color);
+
 	D3D::GetDC()->IASetVertexBuffers(0, 1, &vertexBuffer2, &stride, &offset);
-	shader->Draw(0, 1, 3);
+	shader->Draw(0, pass, 3);
 }

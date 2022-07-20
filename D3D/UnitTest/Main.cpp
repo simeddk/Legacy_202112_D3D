@@ -6,10 +6,14 @@
 #include "VertexLineColorDemo.h"
 #include "VertexLine2Demo.h"
 #include "TriangleDemo.h"
+#include "RectDemo.h"
+#include "IndexBufferDemo.h"
+#include "WorldDemo.h"
+#include "MultiWorldDemo.h"
 
 void Main::Initialize()
 {
-	Push(new TriangleDemo());
+	Push(new MultiWorldDemo());
 }
 
 

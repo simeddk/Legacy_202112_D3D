@@ -61,7 +61,7 @@ void VertexLine2Demo::Render()
 	static UINT pass = 0;
 	{
 		ImGui::InputInt("Pass", (int*)&pass);
-		pass = (UINT)Math::Clamp(pass, 0, 3);
+		pass = Math::Clamp<UINT>(pass, 0, 3);
 
 		static Color color = Color(1, 1, 1, 1);
 		ImGui::ColorEdit3("Line Color", color);
