@@ -1,7 +1,7 @@
 #pragma once
 #include "Systems/IExecute.h"
 
-class GridDemo : public IExecute
+class VertexLineDemo : public IExecute
 {
 public:
 	virtual void Initialize() override;
@@ -15,15 +15,6 @@ public:
 private:
 	Shader* shader;
 
-	UINT width = 128, height = 128;
-
-	UINT vertexCount;
-	Vertex* vertices;
+	Vertex vertices[2];
 	ID3D11Buffer* vertexBuffer;
-
-	UINT indexCount;
-	UINT* indices;
-	ID3D11Buffer* indexBuffer;
-
-	Matrix world;
 };

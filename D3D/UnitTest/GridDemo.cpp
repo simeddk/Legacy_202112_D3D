@@ -3,12 +3,12 @@
 
 void GridDemo::Initialize()
 {
-	shader = new Shader(L"06_Grid.fxo");
+	shader = new Shader(L"05_World.fxo");
 
+	//Create VertexData
 	vertexCount = (width + 1) * (height + 1);
 	vertices = new Vertex[vertexCount];
 
-	//Create VertexData
 	for (UINT y = 0; y <= height; y++)
 	{
 		for (UINT x = 0; x <= width; x++)
@@ -16,8 +16,8 @@ void GridDemo::Initialize()
 			UINT index = (width + 1) * y + x;
 
 			vertices[index].Position.x = (float)x;
-			vertices[index].Position.y = (float)y;
-			vertices[index].Position.z = 0.0f;
+			vertices[index].Position.y = 0.0f;
+			vertices[index].Position.z = (float)y;
 		}
 	}
 
@@ -25,7 +25,7 @@ void GridDemo::Initialize()
 	{
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(Vertex) * 4;
+		desc.ByteWidth = sizeof(Vertex) * vertexCount;
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA subResource = { 0 };
@@ -34,13 +34,31 @@ void GridDemo::Initialize()
 		Check(D3D::GetDevice()->CreateBuffer(&desc, &subResource, &vertexBuffer));
 	}
 
+	//Create Index Data
+	indexCount = width * height * 6;
+	indices =  new UINT[indexCount];
+
+	UINT index = 0;
+	for (UINT y = 0; y < height; y++)
+	{
+		for (UINT x = 0; x < width; x++)
+		{
+			indices[index + 0] = (width + 1) * y + x;
+			indices[index + 1] = (width + 1) * (y + 1) + x;
+			indices[index + 2] = (width + 1) * y + (x + 1);
+			indices[index + 3] = (width + 1) * y + (x + 1);
+			indices[index + 4] = (width + 1) * (y + 1) + x;
+			indices[index + 5] = (width + 1) * (y + 1) + (x + 1);
+
+			index += 6;
+		}
+	}
+
 	//Create IndexBuffer
 	{
-		UINT indices[] = { 0, 1, 2, 2, 1, 3 };
-
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(UINT) * 6;
+		desc.ByteWidth = sizeof(UINT) * indexCount;
 		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA subResource = { 0 };
@@ -48,6 +66,8 @@ void GridDemo::Initialize()
 
 		Check(D3D::GetDevice()->CreateBuffer(&desc, &subResource, &indexBuffer));
 	}
+
+	D3DXMatrixIdentity(&world);
 }
 
 void GridDemo::Destroy()
@@ -59,7 +79,9 @@ void GridDemo::Destroy()
 
 void GridDemo::Update()
 {
-	
+	shader->AsMatrix("World")->SetMatrix(world);
+	shader->AsMatrix("View")->SetMatrix(Context::Get()->View());
+	shader->AsMatrix("Projection")->SetMatrix(Context::Get()->Projection());
 }
 
 void GridDemo::Render()
@@ -75,5 +97,5 @@ void GridDemo::Render()
 	static bool bWireFrame = false;
 	ImGui::Checkbox("Wireframe Mode", &bWireFrame);
 
-	shader->DrawIndexed(0, (bWireFrame ? 1 : 0), 6);
+	shader->DrawIndexed(0, (bWireFrame ? 1 : 0), indexCount);
 }
