@@ -130,12 +130,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CubeDemo.cpp" />
     <ClCompile Include="GridDemo.cpp" />
     <ClCompile Include="IndexBufferDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MultiWorldDemo.cpp" />
     <ClCompile Include="RectDemo.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TextureDemo.cpp" />
+    <ClCompile Include="TextureSamplerDemo.cpp" />
     <ClCompile Include="TriangleDemo.cpp" />
     <ClCompile Include="VertexLine2Demo.cpp" />
     <ClCompile Include="VertexLineColorDemo.cpp" />
@@ -143,12 +146,15 @@
     <ClCompile Include="WorldDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CubeDemo.h" />
     <ClInclude Include="GridDemo.h" />
     <ClInclude Include="IndexBufferDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="MultiWorldDemo.h" />
     <ClInclude Include="RectDemo.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TextureDemo.h" />
+    <ClInclude Include="TextureSamplerDemo.h" />
     <ClInclude Include="TriangleDemo.h" />
     <ClInclude Include="VertexLine2Demo.h" />
     <ClInclude Include="VertexLineColorDemo.h" />

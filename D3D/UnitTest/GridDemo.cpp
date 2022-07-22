@@ -95,7 +95,7 @@ void GridDemo::Render()
 	D3D::GetDC()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	static bool bWireFrame = false;
-	ImGui::Checkbox("Wireframe Mode", &bWireFrame);
+	ImGui::Checkbox("Grid WireFrame", &bWireFrame);
 
 	shader->DrawIndexed(0, (bWireFrame ? 1 : 0), indexCount);
 }

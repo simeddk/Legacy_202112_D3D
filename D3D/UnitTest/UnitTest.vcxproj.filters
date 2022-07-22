@@ -30,6 +30,15 @@
     <ClCompile Include="GridDemo.cpp">
       <Filter>Polygon</Filter>
     </ClCompile>
+    <ClCompile Include="CubeDemo.cpp">
+      <Filter>Polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureDemo.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureSamplerDemo.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h" />
@@ -61,6 +70,15 @@
     <ClInclude Include="GridDemo.h">
       <Filter>Polygon</Filter>
     </ClInclude>
+    <ClInclude Include="CubeDemo.h">
+      <Filter>Polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureDemo.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureSamplerDemo.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Vertex">
@@ -71,6 +89,9 @@
     </Filter>
     <Filter Include="World">
       <UniqueIdentifier>{039c5fb5-efa6-4601-b56e-9c13b935e27e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{2e47d1ff-120b-40df-be8f-15097cff1a10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
