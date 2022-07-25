@@ -38,8 +38,55 @@ SamplerState LinearSampler
     FILTER = MIN_MAG_MIP_LINEAR;
 };
 
-float4 PS(VertexOutput input) : SV_Target
+uint Filter;
+float4 PS_Filter(VertexOutput input) : SV_Target
 {
+    if (Filter == 0)
+        return Texture.Sample(PointSampler, input.Uv);
+
+    return Texture.Sample(LinearSampler, input.Uv);
+}
+
+SamplerState WrapSampler
+{
+    AddressU = WRAP;
+    AddressV = WRAP;
+};
+
+SamplerState MirrorSampler
+{
+    AddressU = MIRROR;
+    AddressV = MIRROR;
+};
+
+SamplerState ClampSampler
+{
+    AddressU = CLAMP;
+    AddressV = CLAMP;
+};
+
+SamplerState BorderSampler
+{
+    AddressU = BORDER;
+    AddressV = BORDER;
+    BorderColor = float4(1, 0, 0, 1);
+};
+
+uint Address;
+float4 PS_Address(VertexOutput input) : SV_Target
+{
+    if (Address == 0)
+       return Texture.Sample(WrapSampler, input.Uv);
+
+    if (Address == 1)
+        return Texture.Sample(MirrorSampler, input.Uv);
+
+    if (Address == 2)
+        return Texture.Sample(ClampSampler, input.Uv);
+
+    if (Address == 3)
+        return Texture.Sample(BorderSampler, input.Uv);
+
     return Texture.Sample(LinearSampler, input.Uv);
 }
 
@@ -48,6 +95,12 @@ technique11 T0
     pass P0
     {
         SetVertexShader(CompileShader(vs_5_0, VS()));
-        SetPixelShader(CompileShader(ps_5_0, PS()));
+        SetPixelShader(CompileShader(ps_5_0, PS_Filter()));
+    }
+
+    pass P1
+    {
+        SetVertexShader(CompileShader(vs_5_0, VS()));
+        SetPixelShader(CompileShader(ps_5_0, PS_Address()));
     }
 }

@@ -3,9 +3,6 @@
 
 void TextureSamplerDemo::Initialize()
 {
-	//D3D11_SAMPLER_DESC;
-	//TODO : SamplerState -> Filter 비교해보기
-
 	Context::Get()->GetCamera()->RotationDegree(0, 0, 0);
 	Context::Get()->GetCamera()->Position(0, 0, -5);
 	dynamic_cast<Freedom*>(Context::Get()->GetCamera())->Speed(5, 0);
@@ -19,10 +16,10 @@ void TextureSamplerDemo::Initialize()
 	vertices[2].Position = Vector3(+0.5f, -0.5f, 0);
 	vertices[3].Position = Vector3(+0.5f, +0.5f, 0);
 
-	vertices[0].Uv = Vector2(0, 1);
+	vertices[0].Uv = Vector2(0, 2);
 	vertices[1].Uv = Vector2(0, 0);
-	vertices[2].Uv = Vector2(1, 1);
-	vertices[3].Uv = Vector2(1, 0);
+	vertices[2].Uv = Vector2(2, 2);
+	vertices[3].Uv = Vector2(2, 0);
 
 	//Create VertexBuffer
 	{
@@ -74,6 +71,18 @@ void TextureSamplerDemo::Update()
 		Path::OpenFileDialog(L"", Path::ImageFilter, L"../../_Textures", f, D3D::GetDesc().Handle);
 	}
 
+	//Filter Test
+	static UINT Filter = 0;
+	ImGui::InputInt("Filter", (int*)&Filter);
+	Filter %= 2;
+	shader->AsScalar("Filter")->SetInt(Filter);
+
+	//Address Test
+	static UINT Address = 0;
+	ImGui::InputInt("Address", (int*)&Address);
+	Address %= 4;
+	shader->AsScalar("Address")->SetInt(Address);
+
 	Matrix world;
 	D3DXMatrixIdentity(&world);
 
@@ -93,7 +102,7 @@ void TextureSamplerDemo::Render()
 
 	shader->AsSRV("Texture")->SetResource(texture->SRV());
 
-	shader->DrawIndexed(0, 0, 6);
+	shader->DrawIndexed(0, 1, 6);
 }
 
 void TextureSamplerDemo::OnLoadTexture(wstring path)
