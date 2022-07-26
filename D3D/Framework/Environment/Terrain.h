@@ -11,6 +11,8 @@ public:
 
 	UINT& Pass() { return pass; }
 
+	void BaseMap(wstring file);
+
 private:
 	void CreateVertexData();
 	void CreateIndexData();
@@ -22,6 +24,7 @@ private:
 	{
 		Vector3 Position = Vector3(0, 0, 0);
 		Vector3 Normal = Vector3(0, 0, 0);
+		Vector2 Uv = Vector2(0, 0);
 	};
 
 private:
@@ -41,4 +44,5 @@ private:
 	Matrix world;
 
 	Texture* heightMap;
+	Texture* baseMap = nullptr;
 };

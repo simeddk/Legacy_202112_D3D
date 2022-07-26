@@ -9,7 +9,7 @@ void TerrainDemo::Initialize()
 
 	shader = new Shader(L"07_Terrain.fxo");
 
-	terrain = new Terrain(shader, L"HeightMap256.png");
+	terrain = new Terrain(shader, L"Terrain/Gray256.png");
 }
 
 void TerrainDemo::Destroy()
@@ -24,6 +24,11 @@ void TerrainDemo::Update()
 	ImGui::InputInt("Pass", (int*)&Pass);
 	Pass %= shader->PassCount();
 	terrain->Pass() = Pass;
+
+	//Lambert Test
+	static Vector3 LightDirection = Vector3(-1, -1, 1);
+	ImGui::SliderFloat3("LightDirection", LightDirection, -1, 1);
+	shader->AsVector("LightDirection")->SetFloatVector(LightDirection);
 
 	terrain->Update();
 }

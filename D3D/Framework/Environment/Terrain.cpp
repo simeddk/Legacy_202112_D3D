@@ -34,6 +34,31 @@ void Terrain::Update()
 
 void Terrain::Render()
 {
+	/*static bool bCheck = false;
+	static int interval = 3;
+	ImGui::Checkbox("Visible Normal", &bCheck);
+	ImGui::SliderInt("Stride", &interval, 1, 5);
+
+	if (bCheck)
+	{
+		for (UINT z = 0; z < height; z += interval)
+		{
+			for (UINT x = 0; x < width; x += interval)
+			{
+				UINT index = width * z + x;
+
+				Vector3 start = vertices[index].Position;
+				Vector3 end = start + vertices[index].Normal;
+
+				DebugLine::Get()->RenderLine(start, end);
+			}
+		}
+	}*/
+
+	if (baseMap != nullptr)
+		shader->AsSRV("BaseMap")->SetResource(baseMap->SRV());
+	//Todo : UV, Sampling
+
 	UINT stride = sizeof(VertexTerrain);
 	UINT offset = 0;
 
@@ -42,6 +67,13 @@ void Terrain::Render()
 	D3D::GetDC()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	shader->DrawIndexed(0, pass, indexCount);
+}
+
+void Terrain::BaseMap(wstring file)
+{
+	SafeDelete(baseMap);
+	
+	baseMap = new Texture(file);
 }
 
 void Terrain::CreateVertexData()
@@ -125,7 +157,7 @@ void Terrain::CreateBuffer()
 	{
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(Vertex) * vertexCount;
+		desc.ByteWidth = sizeof(VertexTerrain) * vertexCount;
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA subResource = { 0 };
