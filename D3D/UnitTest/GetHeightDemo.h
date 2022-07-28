@@ -1,7 +1,7 @@
 #pragma once
 #include "Systems/IExecute.h"
 
-class VertexLineDemo : public IExecute
+class GetHeightDemo : public IExecute
 {
 public:
 	virtual void Initialize() override;
@@ -13,8 +13,13 @@ public:
 	virtual void ResizeScreen() override {};
 
 private:
-	Shader* shader;
+	void OnLoadTexture(wstring path);
 
-	Vertex vertices[2];
+private:
+	Shader* shader;
+	Terrain* terrain;
+
+	Shader* triShader;
 	ID3D11Buffer* vertexBuffer;
+	Vector3 position = Vector3(0, 0, 0);
 };

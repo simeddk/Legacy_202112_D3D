@@ -1,18 +1,33 @@
 matrix World, View, Projection;
+float3 LightDirection = float3(-1, -1, +1);
+Texture2D BaseMap;
+
+uint Albedo = 0;
 
 struct VertexInput
 {
     float4 Position : Position;
+    float3 Normal : Normal;
+    float2 Uv : Uv;
 };
 
 struct VertexOutput
 {
     float4 Position : SV_Position;
+    float3 Normal : Normal;
+    float2 Uv : Uv;
 };
 
-RasterizerState CullMode_None
+RasterizerState WireFrame
 {
-    CullMode = None;
+    FillMode = Wireframe;
+};
+
+SamplerState LinearSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = WRAP;
+    AddressV = WRAP;
 };
 
 VertexOutput VS(VertexInput input)
@@ -23,19 +38,26 @@ VertexOutput VS(VertexInput input)
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
 
+    output.Normal = mul(input.Normal, (float3x3) World);
+
+    output.Uv = input.Uv;
+
     return output;
 }
 
-float4 Color = float4(1, 0, 0, 0);
 float4 PS(VertexOutput input) : SV_Target
 {
-    return Color;
-}
+    return float4(0, 1, 0, 1);
+	float4 baseColor = BaseMap.Sample(LinearSampler, input.Uv);
 
-RasterizerState WireFrame
-{
-    FillMode = Wireframe;
-};
+    float3 normal = normalize(input.Normal);
+    float lambert = dot(-LightDirection, normal);
+
+    if (Albedo == 1)
+        return baseColor;
+
+    return baseColor * lambert;
+}
 
 technique11 T0
 {
@@ -48,14 +70,6 @@ technique11 T0
     pass P1
     {
         SetRasterizerState(WireFrame);
-		
-        SetVertexShader(CompileShader(vs_5_0, VS()));
-        SetPixelShader(CompileShader(ps_5_0, PS()));
-    }
-
-    pass P2
-    {
-        SetRasterizerState(CullMode_None);
 		
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
