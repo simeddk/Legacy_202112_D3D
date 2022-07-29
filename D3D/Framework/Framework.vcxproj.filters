@@ -92,6 +92,15 @@
     <ClInclude Include="Meshes\MeshSphere.h">
       <Filter>Meshes</Filter>
     </ClInclude>
+    <ClInclude Include="Objects\CubeMap.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment\CubeSky.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="Renders\Buffers.h">
+      <Filter>Renders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renders\Context.cpp">
@@ -179,6 +188,15 @@
     <ClCompile Include="Meshes\MeshSphere.cpp">
       <Filter>Meshes</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\CubeMap.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment\CubeSky.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="Renders\Buffers.cpp">
+      <Filter>Renders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -198,6 +216,9 @@
     </Filter>
     <Filter Include="Meshes">
       <UniqueIdentifier>{baac8995-1b48-42ca-a109-030a5f289546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{f8ce7e94-e941-40f2-b100-63625254e53f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
