@@ -1,4 +1,4 @@
-matrix World, View, Projection;
+#include "00_Global.fx"
 
 struct VertexInput
 {
@@ -10,10 +10,6 @@ struct VertexOutput
     float4 Position : SV_Position;
 };
 
-RasterizerState WireFrame
-{
-    FillMode = Wireframe;
-};
 
 //-----------------------------------------------------------------------------
 //Albedo
@@ -22,9 +18,8 @@ VertexOutput VS(VertexInput input)
 {
     VertexOutput output;
 
-    output.Position = mul(input.Position, World);
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
+    output.Position = WorldPosition(input.Position);
+    output.Position = ViewProjection(output.Position);
 
     return output;
 }
@@ -62,11 +57,10 @@ VertexOutput_HeightColor VS_HeightColor(VertexInput input)
 {
     VertexOutput_HeightColor output;
 
-    output.Position = mul(input.Position, World);
+    output.Position = WorldPosition(input.Position);
     //output.Color = GetHeightColor(output.Position.y);
     output.wPosition = output.Position.xyz;
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
+    output.Position = ViewProjection(output.Position);
 
     return output;
 }
@@ -98,12 +92,11 @@ VertexOutput_Lambert VS_Lambert(VertexInput_Lambert input)
 {
     VertexOutput_Lambert output;
 
-    output.Position = mul(input.Position, World);
+    output.Position = WorldPosition(input.Position);
     output.wPosition = output.Position.xyz;
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
+    output.Position = ViewProjection(output.Position);
 
-    output.Normal = mul(input.Normal, (float3x3)World);
+    output.Normal = WorldNormal(input.Normal);
 
     return output;
 }

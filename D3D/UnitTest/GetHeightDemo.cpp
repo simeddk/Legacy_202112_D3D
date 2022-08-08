@@ -76,7 +76,7 @@ void GetHeightDemo::Update()
 
 void GetHeightDemo::Render()
 {
-	terrain->Pass() = 1;
+	terrain->Pass() = 0;
 	terrain->Render();
 
 	UINT stride = sizeof(Vertex);
