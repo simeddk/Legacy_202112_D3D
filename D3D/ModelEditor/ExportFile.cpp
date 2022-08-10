@@ -10,7 +10,8 @@ void ExportFile::Initialize()
 void ExportFile::Tank()
 {
 	Converter* conv = new Converter();
-	conv->ReadFile(L"Tank/tank.fbx");
+	conv->ReadFile(L"Tank/Tank.fbx");
+	conv->ExportMesh(L"Tank/Tank");
 
 	SafeDelete(conv);
 }

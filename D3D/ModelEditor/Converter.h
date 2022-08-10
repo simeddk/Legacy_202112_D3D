@@ -22,4 +22,6 @@ private:
 	Assimp::Importer* importer;
 	const aiScene* scene;
 
+	vector<struct asBone*> bones;
+	vector<struct asMesh*> meshes;
 };

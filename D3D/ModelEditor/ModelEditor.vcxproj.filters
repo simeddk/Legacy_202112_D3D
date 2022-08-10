@@ -15,6 +15,7 @@
       <Filter>Converter</Filter>
     </ClInclude>
     <ClInclude Include="ExportFile.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Converter">
