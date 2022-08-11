@@ -135,5 +135,5 @@ void ModelMeshPart::Binding(Model * model)
 
 void ModelMeshPart::SetShader(Shader * shader)
 {
-	this->SetShader = shader;
+	this->shader = shader;
 }

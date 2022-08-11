@@ -173,3 +173,52 @@ void Converter::WriteMeshData(wstring savePath)
 	
 	SafeDelete(w);
 }
+
+void Converter::ExportMaterial(wstring savePath, bool bOverwrite)
+{
+	savePath = L"../../_Textures/" + savePath + L".material";
+
+	if (bOverwrite == false)
+	{
+		if (Path::ExistFile(savePath) == true)
+			return;
+	}
+
+	ReadMaterialData();
+	WriteMaterialData(savePath);
+}
+
+void Converter::ReadMaterialData()
+{
+	for (UINT i = 0; i < scene->mNumMaterials; i++)
+	{
+		//Todo: ai(fbx) -> as
+	}
+}
+
+bool Converter::FoundMaterialData(aiMaterial * material)
+{
+	string materialName = material->GetName().C_Str();
+
+	bool bFound = false;
+
+	for (asMesh* mesh : meshes)
+	{
+		for (asMeshPart* part : mesh->MeshParts)
+		{
+			if (part->MaterialName == materialName)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+void Converter::WriteMaterialData(wstring savePath)
+{
+}
+
+string Converter::WriteTexture(string saveFolder, string file)
+{
+	return string();
+}
