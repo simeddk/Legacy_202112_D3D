@@ -16,6 +16,7 @@ private:
 	void ReadMeshData(aiNode* node, int index);
 	void WriteMeshData(wstring savePath);
 
+
 public:
 	void ExportMaterial(wstring savePath, bool bOverwrite = true);
 
@@ -24,6 +25,15 @@ private:
 	bool FoundMaterialData(aiMaterial* material);
 	void WriteMaterialData(wstring savePath);
 	string WriteTexture(string saveFolder, string file);
+
+
+public:
+	void ExportAnimClip(UINT index, wstring savePath);
+
+private:
+	struct asClip* ReadClipData(aiAnimation* animation);
+	void ReadkeyframeData(struct asClip* clip, aiNode* node, vector<struct asClipNode>& aniNodeInfos);
+	void WriteClipData(struct asClip* clip, wstring savePath);
 
 private:
 	wstring file;

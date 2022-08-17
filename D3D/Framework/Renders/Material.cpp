@@ -38,7 +38,6 @@ void Material::SetShader(Shader * shader)
 	this->shader = shader;
 
 	sBuffer = shader->AsConstantBuffer("CB_Material");
-	//TODO. 00_Light.fx ÀÛ¼ºÇÒ Â÷·Ê
 
 	sDiffuseMap = shader->AsSRV("DiffuseMap");
 	sSpecularMap = shader->AsSRV("SpecularMap");

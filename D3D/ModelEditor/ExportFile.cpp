@@ -15,7 +15,7 @@ void ExportFile::Tank()
 	Converter* conv = new Converter();
 	conv->ReadFile(L"Tank/Tank.fbx");
 	conv->ExportMesh(L"Tank/Tank");
-	conv->ExportMaterial(L"Tank/Tank");
+	conv->ExportMaterial(L"Tank/Tank", false);
 	SafeDelete(conv);
 }
 

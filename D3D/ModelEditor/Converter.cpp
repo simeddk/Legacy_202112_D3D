@@ -360,3 +360,24 @@ string Converter::WriteTexture(string saveFolder, string file)
 
 	return Path::GetFileName(path);
 }
+
+void Converter::ExportAnimClip(UINT index, wstring savePath)
+{
+	savePath = L"../../_Models/" + savePath + L".clip";
+
+	asClip* clip = ReadClipData(scene->mAnimations[index]);
+	WriteClipData(clip, savePath);
+}
+
+asClip * Converter::ReadClipData(aiAnimation * animation)
+{
+	return nullptr;
+}
+
+void Converter::ReadkeyframeData(asClip * clip, aiNode * node, vector<struct asClipNode>& aniNodeInfos)
+{
+}
+
+void Converter::WriteClipData(asClip * clip, wstring savePath)
+{
+}
