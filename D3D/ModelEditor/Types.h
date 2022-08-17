@@ -127,7 +127,7 @@ public:
 		float scale = 1.0f / totalWeight;
 
 
-		vector<Pair>::iterator it = BoneWeights.begin();
+		it = BoneWeights.begin();
 		while (it != BoneWeights.end())
 		{
 			it->second *= scale;
@@ -168,5 +168,5 @@ struct asClip
 struct asClipNode
 {
 	aiString Name;
-	vector<asKeyframeData> Transforms;
+	vector<asKeyframeData> Keyframe;
 };

@@ -14,6 +14,7 @@ public:
 private:
 	void ReadBoneData(aiNode* node, int index, int parent);
 	void ReadMeshData(aiNode* node, int index);
+	void ReadSkinData();
 	void WriteMeshData(wstring savePath);
 
 
