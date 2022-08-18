@@ -122,6 +122,9 @@
     <ClInclude Include="Model\ModelClip.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\ModelAnimator.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renders\Context.cpp">
@@ -240,6 +243,9 @@
       <Filter>Renders</Filter>
     </ClCompile>
     <ClCompile Include="Model\ModelClip.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\ModelAnimator.cpp">
       <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>

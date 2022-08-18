@@ -13,7 +13,7 @@ struct ModelKeyframeData
 //1 Bone, All Frame
 struct ModelKeyframe
 {
-	string BoneName;
+	wstring BoneName;
 	vector<ModelKeyframeData> Transforms;
 };
 
@@ -34,7 +34,7 @@ public:
 	ModelKeyframe* Keyframe(wstring name);
 
 private:
-	string name;
+	wstring name;
 
 	UINT frameCount;
 	float frameRate;
