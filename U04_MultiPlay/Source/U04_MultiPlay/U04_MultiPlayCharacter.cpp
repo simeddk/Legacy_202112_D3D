@@ -52,6 +52,8 @@ AU04_MultiPlayCharacter::AU04_MultiPlayCharacter()
 
 void AU04_MultiPlayCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
+	FVector::CrossProduct
+
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);

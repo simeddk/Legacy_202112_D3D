@@ -2,25 +2,36 @@
 #include "ModelAnimator.h"
 
 ModelAnimator::ModelAnimator(Shader * shader)
+	: shader(shader)
 {
 	model = new Model();
 	transform = new Transform(shader);
+
+	frameBuffer = new ConstantBuffer(&tweenDesc, sizeof(TweenDesc));
 }
 
 ModelAnimator::~ModelAnimator()
 {
 	SafeDelete(model);
 	SafeDelete(transform);
+
+	SafeDeleteArray(clipTransforms);
+	SafeRelease(texture);
+	SafeRelease(transformsSRV);
+
+	SafeDelete(frameBuffer);
 }
 
 void ModelAnimator::Update()
 {
+
 	if (texture == nullptr)
 	{
 		SetShader(shader, true);
 		CreateTexture();
 	}
 
+	UpdateAnimationFrame();
 
 	for (ModelMesh* mesh : model->Meshes())
 		mesh->Update();
@@ -28,10 +39,71 @@ void ModelAnimator::Update()
 
 void ModelAnimator::Render()
 {
+	frameBuffer->Render();
+	sFrameBuffer->SetConstantBuffer(frameBuffer->Buffer());
+
+	sTransformSRV->SetResource(transformsSRV);
+
 	for (ModelMesh* mesh : model->Meshes())
 	{
 		mesh->SetTransform(transform);
 		mesh->Render();
+	}
+}
+
+void ModelAnimator::UpdateAnimationFrame()
+{
+	TweenDesc& desc = tweenDesc;
+	ModelClip* clip = model->ClipByIndex(desc.Curr.Clip);
+
+	desc.Curr.RunningTime += Time::Delta();
+
+	float time = 1.0f / clip->FrameRate() / desc.Curr.Speed;
+
+	if (desc.Curr.Time >= 1.0f)
+	{
+		desc.Curr.RunningTime = 0.0f;
+		desc.Curr.CurrFrame = (desc.Curr.CurrFrame + 1) % clip->FrameCount();
+		desc.Curr.NextFrame = (desc.Curr.CurrFrame + 1) % clip->FrameCount();
+	}
+	desc.Curr.Time = desc.Curr.RunningTime / time;
+
+
+	if (desc.Next.Clip > -1)
+	{
+		ModelClip* nextClip = model->ClipByIndex(desc.Next.Clip);
+
+		desc.ChangeTime += Time::Delta();
+		desc.TweenTime = desc.ChangeTime / desc.TakeTime;
+
+		if (desc.TweenTime >= 1.0f)
+		{
+			desc.Curr = desc.Next;
+
+			desc.Next.Clip = -1;
+			desc.Next.CurrFrame = 0;
+			desc.Next.NextFrame = 0;
+			desc.Next.Time = 0;
+			desc.Next.RunningTime = 0.0f;
+
+			desc.ChangeTime = 0.0f;
+			desc.TweenTime = 0.0f;
+		}
+		else
+		{
+			desc.Next.RunningTime += Time::Delta();
+
+			float time = 1.0f / nextClip->FrameRate() / desc.Next.Speed;
+
+			if (desc.Next.Time >= 1.0f)
+			{
+				desc.Next.RunningTime = 0.0f;
+				desc.Next.CurrFrame = (desc.Next.CurrFrame + 1) % clip->FrameCount();
+				desc.Next.NextFrame = (desc.Next.CurrFrame + 1) % clip->FrameCount();
+			}
+			desc.Next.Time = desc.Next.RunningTime / time;
+
+		}
 	}
 }
 
@@ -50,6 +122,13 @@ void ModelAnimator::ReadClip(wstring file)
 	model->ReadClip(file);
 }
 
+void ModelAnimator::PlayTweenMode(UINT clip, float speed, float takeTime)
+{
+	tweenDesc.TakeTime = takeTime;
+	tweenDesc.Next.Clip = clip;
+	tweenDesc.Next.Speed = speed;
+}
+
 void ModelAnimator::SetShader(Shader * shader, bool bFirst)
 {
 	this->shader = shader;
@@ -60,7 +139,11 @@ void ModelAnimator::SetShader(Shader * shader, bool bFirst)
 		transform = new Transform(shader);
 	}
 
+	sTransformSRV = shader->AsSRV("TransformsMap");
+	sFrameBuffer = shader->AsConstantBuffer("CB_AnimationFrame");
 
+	for (ModelMesh* mesh : model->Meshes())
+		mesh->SetShader(shader);
 }
 
 void ModelAnimator::Pass(UINT pass)
@@ -118,7 +201,17 @@ void ModelAnimator::CreateTexture()
 		VirtualFree(p, 0, MEM_RELEASE);
 	}
 
-	//Creaste ShaderResourceView
+	//Create SRV
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+		desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+		desc.Texture2DArray.MipLevels = 1;
+		desc.Texture2DArray.ArraySize = model->ClipCount();
+
+		Check(D3D::GetDevice()->CreateShaderResourceView(texture, &desc, &transformsSRV));
+	}
 }
 
 void ModelAnimator::CreateClipTransforms(UINT index)
